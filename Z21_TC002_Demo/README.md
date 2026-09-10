@@ -1,78 +1,78 @@
-# 示例代码说明
+# Sample Code Documentation
 
-本文档介绍了本平台各硬件功能的使用方法及注意事项，建议结合对应的示例页面源码一起阅读。
+This document describes how to use the various hardware features of this platform and what to watch out for. It is best read together with the source code of the corresponding example pages.
 
-## 硬件功能介绍
+## Hardware Feature Overview
 
-### 按键操作
+### Button Input
 
-本芯片提供一个旋钮和三个独立按键，共支持以下输入事件（详见 `managers/KeyManager.h`）：
+This chip provides one knob and three separate buttons, supporting the following input events in total (see `managers/KeyManager.h` for details):
 
-| 按键码 | 说明 |
+| Key code | Description |
 |---|---|
-| `E_KEYCODE_CLOCKWISE` | 旋钮顺时针旋转 |
-| `E_KEYCODE_ANTI_CLOCKWISE` | 旋钮逆时针旋转 |
-| `E_KEYCODE_KNOB_BUTTON` | 旋钮按下 |
-| `E_KEYCODE_LEFT_BUTTON` | 左键按下 |
-| `E_KEYCODE_MIDDLE_BUTTON` | 中键按下 |
-| `E_KEYCODE_RIGHT_BUTTON` | 右键按下 |
+| `E_KEYCODE_CLOCKWISE` | Knob turned clockwise |
+| `E_KEYCODE_ANTI_CLOCKWISE` | Knob turned counter-clockwise |
+| `E_KEYCODE_KNOB_BUTTON` | Knob pressed |
+| `E_KEYCODE_LEFT_BUTTON` | Left button pressed |
+| `E_KEYCODE_MIDDLE_BUTTON` | Middle button pressed |
+| `E_KEYCODE_RIGHT_BUTTON` | Right button pressed |
 
-通过 `KeyManager::getInstance().addKeyEventCallback(cb)` 注册回调即可接收按键事件。示例参见 `pages/BtnTestPage.h`。
+Register a callback with `KeyManager::getInstance().addKeyEventCallback(cb)` to receive button events. See `pages/BtnTestPage.h` for an example.
 
-### LED 显示
+### LED Display
 
-LED 灯板分辨率为 **52×16** 像素，通过 SPI 总线驱动。调用 `PageBase::sendLedData(rgbData)` 发送一帧 RGB 数据（按行顺序排列，每像素 3 字节）即可刷新显示。该接口已内部处理 SPI 初始化和 `GPIO_35` 的同步控制，直接调用即可。示例参见 `pages/RgbTestPage.h`。
+The LED panel has a resolution of **52×16** pixels and is driven over the SPI bus. Call `PageBase::sendLedData(rgbData)` with one frame of RGB data (arranged row by row, 3 bytes per pixel) to refresh the display. This interface already handles SPI initialization and the synchronization of `GPIO_35` internally, so you can call it directly. See `pages/RgbTestPage.h` for an example.
 
-### Audio 播放
+### Audio Playback
 
-通过 `AudioManager`（`managers/AudioManager.h`）可控制音频的播放、暂停、停止及音量：
+`AudioManager` (`managers/AudioManager.h`) controls audio playback, pausing, stopping and volume:
 
 ```cpp
 #include "managers/AudioManager.h"
 auto& audio = awtrix::AudioManager::getInstance();
-audio.setVolume(3);          // 音量 0~6，0 为静音
+audio.setVolume(3);          // Volume 0~6, 0 is muted
 audio.playAudio("/path/to/file.mp3");
 audio.pauseAudio();
 audio.resumeAudio();
 audio.stopAudio();
 ```
 
-示例参见 `pages/AudioTestPage.h`。
+See `pages/AudioTestPage.h` for an example.
 
-### MIC 音量检测
+### Microphone Level Detection
 
-MIC 音量数据由 MCU 上报，通过 `McuManager` 读取（`managers/McuManager.h`）：
+The microphone level data is reported by the MCU and read through `McuManager` (`managers/McuManager.h`):
 
 ```cpp
 #include "managers/McuManager.h"
-McuManager::getInstance().setAutoMicReport(true);  // 开启自动上报
+McuManager::getInstance().setAutoMicReport(true);  // Enable automatic reporting
 int micValue = McuManager::getInstance().queryMicValue();
 ```
 
-`AudioTestPage` 中展示了实时显示 MIC 音量百分比的完整实现，示例参见 `pages/AudioTestPage.h`。
+`AudioTestPage` shows a complete implementation that displays the microphone level percentage in real time; see `pages/AudioTestPage.h`.
 
 ### WIFI + BLE
 
-WiFi 和 BLE 功能已集成，两者存在依赖关系：**BLE 必须在 WiFi 已开启的前提下才能正常使用**。
+WiFi and BLE are both integrated, and there is a dependency between them: **BLE only works properly if WiFi has already been enabled**.
 
-**WiFi 启动：**
+**Starting WiFi:**
 ```cpp
 #include <base/wifi.h>
-base::wifiOnAndWait(10);  // 等待 WiFi 就绪，超时 10 秒
+base::wifiOnAndWait(10);  // Wait for WiFi to be ready, 10 second timeout
 ```
 
-**BLE 启动：**
+**Starting BLE:**
 ```cpp
 #include "ble/bluetooth_service.h"
 BluetoothParams params;
 params.name = "MyDevice";
 params.on_message = [](const std::string& msg) {
-    // 处理收到的 BLE 消息
+    // Handle the received BLE message
 };
 BluetoothService::instance().start(params);
 ```
 
-支持通过配置文件 `/mnt/usb1/test.cfg`（JSON 格式）预设 WiFi 和 BLE 参数，字段说明如下：
+The WiFi and BLE parameters can be preset through the configuration file `/mnt/usb1/test.cfg` (JSON format), with the following fields:
 
 ```json
 {
@@ -83,30 +83,30 @@ BluetoothService::instance().start(params);
 }
 ```
 
-若 `ble` 字段为空，设备名将自动使用 WiFi MAC 地址后四位生成（如 `Ulanzi TC002 AB12`）。示例参见 `pages/WifiTestPage.h`。
+If the `ble` field is empty, the device name is generated automatically from the last four digits of the WiFi MAC address (e.g. `Ulanzi TC002 AB12`). See `pages/WifiTestPage.h` for an example.
 
-### GPIO 接口
+### GPIO Interface
 
-`GPIO_06` 和 `GPIO_85` 两个 LED 灯引脚保留供用户自由使用，通过 `utils/GpioHelper.h` 控制：
+The two LED pins `GPIO_06` and `GPIO_85` are reserved for free use and are controlled through `utils/GpioHelper.h`:
 
 ```cpp
 #include "utils/GpioHelper.h"
-GpioHelper::output("GPIO_06", 1);  // 高电平点亮 LED
-GpioHelper::output("GPIO_06", 0);  // 低电平熄灭 LED
+GpioHelper::output("GPIO_06", 1);  // High level turns the LED on
+GpioHelper::output("GPIO_06", 0);  // Low level turns the LED off
 ```
 
-## 注意事项
+## Notes
 
-- 请先阅读相关 IDE 文档和开发指南，了解编译和固件升级流程。
+- Please read the relevant IDE documentation and development guide first to understand the build and firmware upgrade process.
 
-- **防砖检测**：系统启动后必须在入口处设置运行标志，否则系统将触发防砖回滚。
+- **Anti-brick check**: after the system starts, the running flag must be set at the entry point, otherwise the system will trigger the anti-brick rollback.
 
 ```cpp
 #include <os/SystemProperties.h>
 SystemProperties::setString("sys.zkapp.state", "running");
 ```
 
-- **MCU 初始化**：启动时需先初始化 MCU 通信并查询版本号，LED 灯板才能正常工作。
+- **MCU initialization**: at startup the MCU communication must be initialized and the version number queried first, otherwise the LED panel will not work properly.
 
 ```cpp
 #include "managers/McuManager.h"
@@ -115,6 +115,6 @@ std::string mcuVer;
 McuManager::getInstance().queryMcuVersion(mcuVer);
 ```
 
-- **SPI 帧率限制**：帧间隔不可小于15ms，否则可能导致 LED 显示异常。`sendLedData` 已内置节流机制，建议直接调用。
-- **BLE 依赖 WiFi**：使用 BLE 功能前必须确保 WiFi 已成功开启，否则 BLE 服务将无法正常启动。
-- **主动刷机**：如果想要重刷为官方固件，请按下设备上的重置按钮（位于 USB-C 旁边）并保持按住，会自动刷回官方固件。
+- **SPI frame rate limit**: the interval between frames must not be shorter than 15 ms, otherwise the LED display may misbehave. `sendLedData` already has built-in throttling, so calling it directly is recommended.
+- **BLE depends on WiFi**: before using BLE features, make sure WiFi has been enabled successfully, otherwise the BLE service will fail to start.
+- **Reflashing manually**: to flash the official firmware back, press and hold the reset button on the device (next to the USB-C port); the official firmware will be restored automatically.

@@ -1,87 +1,87 @@
-# TC002 Vibe Coding 红绿灯
+# TC002 Vibe Coding Traffic Light
 
-[![导入到 Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fmain%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml)
+[![Import into Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fmain%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml)
 
-## 简介
+## Introduction
 
-这个应用把 Ulanzi U-Clock TC002 变成一个桌面状态红绿灯，适合显示编程助手、CI 任务、本地脚本、自动化流程等工作状态。
+This app turns the Ulanzi U-Clock TC002 into a desktop status traffic light, suitable for showing the working state of coding assistants, CI jobs, local scripts, automation flows and so on.
 
-作者：王行知
+Author: 王行知
 
-它的核心是一份 Home Assistant Blueprint。Blueprint 监听一个 Home Assistant 实体的状态变化，然后通过 MQTT 向 TC002 的 Custom App topic 发布显示内容。
+At its core is a Home Assistant blueprint. The blueprint watches the state changes of a Home Assistant entity and then publishes the content to be displayed to the TC002's Custom App topic over MQTT.
 
-这个应用真正面向的是 Vibe Coding 场景：Claude Code、Codex、CI、本地脚本等工具在开始运行、调用工具、遇到权限/错误、运行结束时，把状态写入 Home Assistant；Home Assistant 再通过 MQTT 驱动 TC002 红绿灯。
+What this app is really aimed at is the vibe coding scenario: tools like Claude Code, Codex, CI and local scripts write their state into Home Assistant when they start running, call a tool, hit a permission prompt or an error, or finish; Home Assistant then drives the TC002 traffic light over MQTT.
 
-当前显示素材为 52x16 PNG/GIF，小尺寸图片直接内嵌在 `blueprint.yaml` 里。灯体之外的背景像素为纯黑色，三盏灯的横向间距保持一致。
+The display assets are currently 52x16 PNG/GIF images; being small, they are embedded directly in `blueprint.yaml`. The background pixels outside the lamps are pure black, and the horizontal spacing between the three lamps is uniform.
 
-为了减少手机拍摄 LED 点阵时的暗部频闪，未亮起的灯体不会保留暗红、暗黄、暗绿像素，而是完全纯黑；只有当前亮起的灯体会绘制。
+To reduce dark-area flicker when filming the LED matrix with a phone, unlit lamps do not keep any dark red, dark yellow or dark green pixels but are completely black; only the currently lit lamp is drawn.
 
-支持的状态：
+Supported states:
 
-| 状态值 | 显示效果 |
+| State value | Display |
 |---|---|
-| `off` | 全黑熄灭 |
-| `idle` | 绿灯 |
-| `working` | 绿、黄、红灯循环 |
-| `attention` | 黄灯闪烁 |
-| `blocked` | 红灯闪烁 |
+| `off` | All black, lights out |
+| `idle` | Green light |
+| `working` | Green, yellow, red in a loop |
+| `attention` | Flashing yellow light |
+| `blocked` | Flashing red light |
 
-## 预览
+## Preview
 
-见 `preview/demo.gif`。
+See `preview/demo.gif`.
 
-## 依赖
+## Dependencies
 
-- Home Assistant，并已启用 MQTT 集成
-- 一个 Home Assistant 和 TC002 都能访问的 MQTT broker
-- TC002 已连接到同一个 MQTT broker
-- TC002 上有一个 Custom App，名称需要和 MQTT topic 里的 `[APP_NAME]` 对应
+- Home Assistant with the MQTT integration enabled
+- An MQTT broker reachable from both Home Assistant and the TC002
+- A TC002 connected to that same MQTT broker
+- A custom app on the TC002 whose name matches the `[APP_NAME]` in the MQTT topic
 
-## 安装
+## Installation
 
-1. 在 Home Assistant 中导入 `blueprint.yaml`。
-2. 创建或选择一个用于保存状态的实体。第一次测试推荐使用 `input_select` helper。
-3. 用这个 Blueprint 创建自动化。
-4. 把 `TC002 Custom App MQTT topic` 设置为你的设备 topic。
+1. Import `blueprint.yaml` into Home Assistant.
+2. Create or pick an entity to hold the state. For a first test, an `input_select` helper is recommended.
+3. Create an automation from this blueprint.
+4. Set `TC002 Custom App MQTT topic` to your device's topic.
 
-topic 格式：
+Topic format:
 
 ```text
 [PREFIX]/custom/[APP_NAME]
 ```
 
-示例：
+Example:
 
 ```text
 ulanzi_1bf6/custom/vibe_signal
 ```
 
-`[PREFIX]` 通常是 MQTT 前缀加设备 MAC 地址后四位。比如 MQTT 前缀为 `ulanzi`，设备 MAC 后四位为 `1bf6`，则前缀通常为 `ulanzi_1bf6`。
+`[PREFIX]` is usually the MQTT prefix plus the last four digits of the device's MAC address. For example, with the MQTT prefix `ulanzi` and a device MAC ending in `1bf6`, the prefix is usually `ulanzi_1bf6`.
 
-## 与 Claude Code / Codex 搭配使用
+## Using It with Claude Code / Codex
 
-推荐链路：
+The recommended chain:
 
 ```text
 Claude Code / Codex hook
-  -> 更新 Home Assistant 状态实体
-  -> Blueprint 发布 MQTT
-  -> TC002 显示红绿灯
+  -> updates the Home Assistant state entity
+  -> the blueprint publishes over MQTT
+  -> the TC002 shows the traffic light
 ```
 
-第一次测试可以手动切换 `input_select` helper。确认 TC002 能正常显示后，再把 Claude Code、Codex 或其它编程助手的 hook 接进来。
+For a first test you can switch the `input_select` helper by hand. Once the TC002 displays correctly, hook up Claude Code, Codex or another coding assistant.
 
-建议事件映射：
+Suggested event mapping:
 
-| Code Agent 行为 | 建议状态值 | 灯效 |
+| Code agent behavior | Suggested state value | Light effect |
 |---|---|---|
-| 没有任务运行 | `off` | 全黑熄灭 |
-| 一轮任务正常结束 | `idle` | 绿灯提示 |
-| 用户提交任务、Agent 正在运行、正在调用工具 | `attention` | 黄灯闪烁 |
-| 权限确认、命令失败、测试失败、流程阻塞 | `blocked` | 红灯闪烁 |
-| 手动测试动画 | `working` | 绿、黄、红循环 |
+| No task running | `off` | All black, lights out |
+| A round of work finished normally | `idle` | Green light |
+| User submitted a task, agent is running, a tool is being called | `attention` | Flashing yellow light |
+| Permission confirmation, command failure, test failure, blocked flow | `blocked` | Flashing red light |
+| Manual animation test | `working` | Green, yellow, red in a loop |
 
-如果使用 Home Assistant REST API，可以让 hook 调用下面的命令更新 helper：
+If you use the Home Assistant REST API, your hook can update the helper with the following command:
 
 ```bash
 curl -X POST "http://<HA_HOST>:8123/api/services/input_select/select_option" \
@@ -90,36 +90,36 @@ curl -X POST "http://<HA_HOST>:8123/api/services/input_select/select_option" \
   -d '{"entity_id":"input_select.tc002_vibe_status","option":"attention"}'
 ```
 
-把最后的 `option` 改成 `idle`、`blocked`、`off`，就可以驱动不同灯效。
+Change the `option` at the end to `idle`, `blocked` or `off` to drive the different light effects.
 
-Claude Code、Codex 或其它支持 hook / shell command 的工具，可以在对应生命周期里调用这个命令：
+Claude Code, Codex or any other tool that supports hooks / shell commands can invoke this command at the corresponding points in its lifecycle:
 
-| Hook 场景 | 建议命令 |
+| Hook scenario | Suggested command |
 |---|---|
-| 用户提交任务 / 开始执行 | 设置为 `attention` |
-| 工具调用前后 / 命令运行中 | 设置为 `attention` |
-| 权限请求 / 失败 / 阻塞 | 设置为 `blocked` |
-| 一轮任务结束 | 设置为 `idle`，几秒后可再设置为 `off` |
+| User submits a task / execution starts | Set to `attention` |
+| Before and after tool calls / while a command runs | Set to `attention` |
+| Permission request / failure / blocked | Set to `blocked` |
+| A round of work finishes | Set to `idle`, and optionally to `off` a few seconds later |
 
-如果你不想让每个 hook 直接写复杂 `curl`，可以自己封装一个脚本，例如 `tc002-vibe-status.sh attention`，脚本内部再调用 Home Assistant API。这样 Claude Code、Codex、CI 都可以复用同一套状态出口。
+If you would rather not put a complex `curl` into every hook, you can wrap it in your own script, e.g. `tc002-vibe-status.sh attention`, which then calls the Home Assistant API internally. That way Claude Code, Codex and CI can all reuse the same status exit point.
 
-更详细的接入思路见 `AGENT_HOOKS.md`。
+For a more detailed integration guide, see `AGENT_HOOKS.md`.
 
-## 配置项
+## Configuration Options
 
-| 配置项 | 说明 |
+| Option | Description |
 |---|---|
-| 状态实体 | 用来驱动红绿灯的 Home Assistant 实体 |
-| TC002 Custom App MQTT topic | 目标 topic，通常是 `[PREFIX]/custom/[APP_NAME]` |
-| 显示时长 | 写入 TC002 Custom App payload 的 `duration` 值 |
-| 保留 MQTT 消息 | 是否让 broker 保留最后一条消息，便于设备重连后恢复显示 |
-| 状态值 | 每种灯效对应的状态文本 |
+| State entity | The Home Assistant entity that drives the traffic light |
+| TC002 Custom App MQTT topic | The target topic, usually `[PREFIX]/custom/[APP_NAME]` |
+| Display duration | The `duration` value written into the TC002 Custom App payload |
+| Retain MQTT message | Whether the broker should retain the last message, so the display is restored after the device reconnects |
+| State values | The state text corresponding to each light effect |
 
 ## MQTT Payload
 
-Blueprint 发布的是 TC002 Custom App JSON payload。图片通过 `image` 字段以内嵌 base64 data URL 的方式发送，不需要单独上传图片，也不需要外部图床。
+The blueprint publishes a TC002 Custom App JSON payload. The image is sent through the `image` field as an inline base64 data URL, so there is no need to upload the image separately or to use an external image host.
 
-示例结构：
+Example structure:
 
 ```json
 {
@@ -135,46 +135,46 @@ Blueprint 发布的是 TC002 Custom App JSON payload。图片通过 `image` 字�
 }
 ```
 
-## 真机测试
+## Testing on Real Hardware
 
-详细步骤见 `HOME_ASSISTANT_TESTING.md`。
+For detailed steps see `HOME_ASSISTANT_TESTING.md`.
 
-快速检查流程：
+Quick checklist:
 
-1. 查看 TC002 当前 IP 和 MQTT 配置：
+1. Check the TC002's current IP and MQTT configuration:
 
    ```bash
    curl http://<TC002_IP>/getBase
    curl http://<TC002_IP>/getMqttConfig
    ```
 
-2. 确认 TC002 和 Home Assistant 使用同一个 MQTT broker。
+2. Make sure the TC002 and Home Assistant use the same MQTT broker.
 
-3. 确认 topic。比如 MQTT 前缀为 `ulanzi`，设备 MAC 后四位为 `1bf6`，Custom App 名为 `vibe_signal`，则 topic 为：
+3. Determine the topic. For example, with the MQTT prefix `ulanzi`, a device MAC ending in `1bf6` and the custom app named `vibe_signal`, the topic is:
 
    ```text
    ulanzi_1bf6/custom/vibe_signal
    ```
 
-4. 确认 TC002 当前正在显示对应的 Custom App，例如 `vibe_signal`。更新 Custom App 内容不一定会自动切换到该 App。
+4. Make sure the TC002 is currently showing the corresponding custom app, e.g. `vibe_signal`. Updating a custom app's content does not necessarily switch to that app automatically.
 
-5. 在 Home Assistant 中依次切换状态实体为 `attention`、`blocked`、`idle`、`off`。
+5. In Home Assistant, switch the state entity to `attention`, `blocked`, `idle` and `off` one after another.
 
-6. TC002 应分别显示黄灯、红灯、绿灯、熄灭。
+6. The TC002 should show a yellow light, a red light, a green light and then go dark.
 
-底层 MQTT 链路可以先用 `draw` payload 快速验证：
+You can verify the underlying MQTT chain quickly with a `draw` payload first:
 
 ```bash
 mosquitto_pub -h <BROKER_HOST> -t ulanzi_1bf6/custom/vibe_signal -m '{"duration":3600,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#000000"]},{"dfc":[26,8,5,"#FFCB52"]}]}'
 ```
 
-## 已知问题
+## Known Issues
 
-- 当前版本把小图片直接内嵌在 `blueprint.yaml` 中，安装最简单，但后续修改图形时需要同步更新 base64。
-- TC002 收到 Custom App 更新后，不一定会自动切换到该 App。测试时建议先在设备上手动切到目标 Custom App，或者发布到当前正在显示的 App 名。
-- 用手机相机录制 TC002 时，视频里可能出现频闪或横向滚动暗纹。这通常是 LED 点阵扫描刷新 / PWM 调光与相机快门不同步导致的，不一定代表肉眼看到的画面也在闪。
-- TC002 的 MQTT topic 规则可能随官方固件变化，topic 已做成可配置项。
+- The current version embeds the small images directly in `blueprint.yaml`, which makes installation as simple as possible, but means the base64 has to be updated whenever the graphics change.
+- After receiving a Custom App update, the TC002 does not necessarily switch to that app automatically. When testing, it is best to switch to the target custom app manually on the device first, or publish to the name of the app currently being displayed.
+- When recording the TC002 with a phone camera, the video may show flicker or horizontal dark bands rolling across the screen. This is usually caused by the LED matrix scan refresh / PWM dimming not being in sync with the camera shutter, and does not necessarily mean the image flickers to the naked eye.
+- The TC002's MQTT topic rules may change with official firmware updates, so the topic has been made configurable.
 
-## 许可证
+## License
 
-GPL-3.0-or-later。
+GPL-3.0-or-later.

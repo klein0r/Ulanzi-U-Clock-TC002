@@ -1,35 +1,35 @@
-# 本地测试工具
+# Local Testing Tools
 
-本目录包含本地测试和真实用量接入脚本，用于开发调试。
+This directory contains scripts for local testing and for hooking up real usage data, intended for development and debugging.
 
-> **完整安装指南**：见 [docs/QUICKSTART.md](../docs/QUICKSTART.md)
+> **Full installation guide**: see [docs/QUICKSTART.md](../docs/QUICKSTART.md)
 
-## 真实 Claude Code 用量接入
+## Hooking Up Real Claude Code Usage
 
-本目录的脚本实现完整的实时限额显示，**只显示真实数据**：
+The scripts in this directory implement the complete real-time rate limit display, and **only ever show real data**:
 
 ```text
 Claude Code statusLine hook
-  → claude_statusline_bridge.js（接收 stdin JSON，提取限额百分比）
-  → render_usage.py（渲染 52x16 限额用量 GIF）
-  → mosquitto_pub（MQTT 发布到 TC002）
+  → claude_statusline_bridge.js (receives JSON on stdin, extracts the rate limit percentages)
+  → render_usage.py (renders the 52x16 rate limit usage GIF)
+  → mosquitto_pub (publishes to the TC002 over MQTT)
 ```
 
-### 快速测试
+### Quick Test
 
 ```bash
 cd apps/mqtt/claude-bot
 
-# 从状态文件读取并发布：
-TC002_MQTT_HOST=<你的broker地址> bash lab/publish_usage.sh
+# Read from the state file and publish:
+TC002_MQTT_HOST=<your broker address> bash lab/publish_usage.sh
 
-# 渲染 GIF 到磁盘：
+# Render the GIF to disk:
 python3 lab/render_usage.py 50 30 --file /tmp/claude_bot_usage.gif
 ```
 
-### 实时模式（statusLine hook）
+### Live Mode (statusLine hook)
 
-1. 配置 Claude Code statusLine hook（详见 `docs/USAGE_INTEGRATION.md`）：
+1. Configure the Claude Code statusLine hook (see `docs/USAGE_INTEGRATION.md` for details):
 
    ```json
    {
@@ -40,62 +40,62 @@ python3 lab/render_usage.py 50 30 --file /tmp/claude_bot_usage.gif
    }
    ```
 
-2. bridge 脚本在每次 Claude Code 响应后自动运行：
-   - 从 stdin 提取 `rate_limits.five_hour.used_percentage` 和 `seven_day.used_percentage`
-   - 将状态写入 `/tmp/claude-statusline-state.json`
-   - 渲染 52x16 GIF 并通过 MQTT 发布到 TC002
+2. The bridge script runs automatically after every Claude Code response:
+   - Extracts `rate_limits.five_hour.used_percentage` and `seven_day.used_percentage` from stdin
+   - Writes the state to `/tmp/claude-statusline-state.json`
+   - Renders the 52x16 GIF and publishes it to the TC002 over MQTT
 
-3. 轮询模式（每 300 秒读取一次状态文件）：
+3. Polling mode (reads the state file every 300 seconds):
 
    ```bash
    bash lab/publish_usage.sh --loop 300
    ```
 
-### 环境变量
+### Environment Variables
 
-| 变量 | 必填 | 默认值 | 说明 |
+| Variable | Required | Default | Description |
 |---|---|---|---|
-| `TC002_MQTT_HOST` | 否 | `127.0.0.1` | MQTT broker 地址 |
-| `TC002_MQTT_PORT` | 否 | `1883` | MQTT broker 端口 |
-| `TC002_MQTT_TOPIC` | 否 | `ulanzi_1bf6/custom/claude_bot` | Custom App topic |
-| `TC002_DURATION` | 否 | `31536000` | 显示时长（秒），默认一年，保持常亮 |
-| `TC002_STATE_FILE` | 否 | `/tmp/claude-statusline-state.json` | 状态文件路径 |
+| `TC002_MQTT_HOST` | No | `127.0.0.1` | MQTT broker address |
+| `TC002_MQTT_PORT` | No | `1883` | MQTT broker port |
+| `TC002_MQTT_TOPIC` | No | `ulanzi_1bf6/custom/claude_bot` | Custom App topic |
+| `TC002_DURATION` | No | `31536000` | Display duration (seconds), one year by default, so it stays on permanently |
+| `TC002_STATE_FILE` | No | `/tmp/claude-statusline-state.json` | Path of the state file |
 
-### 流程说明
+### How the Flow Works
 
-| 步骤 | 脚本 | 功能 |
+| Step | Script | Function |
 |---|---|---|
-| 1. Hook | `claude_statusline_bridge.js` | 接收 Claude Code statusLine JSON，提取限额百分比，写入状态文件，渲染 GIF，发布 MQTT |
-| 1a. 渲染 | `render_usage.py` | 接收两个百分比（0-100），生成 52×16 动画 GIF，输出 base64 |
-| 1b. 发布 | `mosquitto_pub` | 将 base64 GIF 包装成 TC002 Custom App JSON payload，发布到 MQTT topic |
-| 2. 状态 | `/tmp/claude-statusline-state.json` | bridge 写入限额数据；publish_usage.sh 可从中读取 |
+| 1. Hook | `claude_statusline_bridge.js` | Receives the Claude Code statusLine JSON, extracts the rate limit percentages, writes the state file, renders the GIF and publishes over MQTT |
+| 1a. Render | `render_usage.py` | Takes two percentages (0-100), generates a 52×16 animated GIF, outputs base64 |
+| 1b. Publish | `mosquitto_pub` | Wraps the base64 GIF into a TC002 Custom App JSON payload and publishes it to the MQTT topic |
+| 2. State | `/tmp/claude-statusline-state.json` | The bridge writes the rate limit data here; publish_usage.sh can read it |
 
-### 用量条颜色编码
+### Usage Bar Color Coding
 
-| 百分比 | 颜色 | 含义 |
+| Percentage | Color | Meaning |
 |---|---|---|
-| < 70% | 绿色 | 正常 |
-| 70–90% | 黄色 | 注意 |
-| > 90% | 红色 | 危险 |
+| < 70% | Green | Normal |
+| 70–90% | Yellow | Caution |
+| > 90% | Red | Danger |
 
-### render_usage.py — 独立渲染器
+### render_usage.py — Standalone Renderer
 
 ```bash
-# 输出 base64 到 stdout：
+# Print base64 to stdout:
 python3 lab/render_usage.py 50 30
 
-# 同时写入 GIF 文件：
+# Also write a GIF file:
 python3 lab/render_usage.py 50 30 --file /tmp/claude_bot_usage.gif
 ```
 
-需要 Python 3 + Pillow（`pip install pillow`）。
+Requires Python 3 + Pillow (`pip install pillow`).
 
-### 旧版脚本（已弃用）
+### Legacy Script (Deprecated)
 
-`claude_usage_snapshot.js` 是旧版脚本，通过 `ccusage` 读取 Codex 历史花费。已被 statusLine bridge 取代。
+`claude_usage_snapshot.js` is the legacy script, which reads the Codex spending history via `ccusage`. It has been superseded by the statusLine bridge.
 
-## 为什么用多个脚本
+## Why Several Scripts
 
-- `claude_statusline_bridge.js` — Claude Code hook，读取 stdin，写入状态文件 + 发布 MQTT
-- `render_usage.py` — 纯渲染器，可被其他工具复用
-- `publish_usage.sh` — 轻量编排器，从状态文件读取并发布到 MQTT
+- `claude_statusline_bridge.js` — the Claude Code hook: reads stdin, writes the state file and publishes over MQTT
+- `render_usage.py` — a pure renderer that other tools can reuse
+- `publish_usage.sh` — a lightweight orchestrator that reads the state file and publishes over MQTT

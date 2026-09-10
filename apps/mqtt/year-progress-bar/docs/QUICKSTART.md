@@ -1,62 +1,62 @@
-# TC002 年进度条 — 快速入门
+# TC002 Year Progress Bar — Quick Start
 
-5 分钟内让 TC002 显示今年的进度。
+Get the TC002 showing this year's progress in 5 minutes.
 
-## 前置条件
+## Prerequisites
 
-- [x] 已安装 Python 3 + Pillow
-- [x] 已安装 mosquitto
-- [x] TC002 设备已开机并连接 Wi-Fi
+- [x] Python 3 + Pillow installed
+- [x] mosquitto installed
+- [x] TC002 device powered on and connected to Wi-Fi
 
-## 第一步：获取设备信息
-
-```bash
-curl http://<设备IP>/getBase
-curl http://<设备IP>/getMqttConfig
-```
-
-## 第二步：计算 MQTT Topic
-
-```
-[mqtt_prefix]_[MAC后四位]/custom/year_progress
-```
-
-## 第三步：测试 MQTT 连接
+## Step 1: Get the Device Information
 
 ```bash
-mosquitto_pub -h <broker地址> -t <你的topic> -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
+curl http://<device IP>/getBase
+curl http://<device IP>/getMqttConfig
 ```
 
-屏幕变绿 = 连接成功。
+## Step 2: Work Out the MQTT Topic
 
-## 第四步：发布年进度条
+```
+[mqtt_prefix]_[last 4 digits of MAC]/custom/year_progress
+```
+
+## Step 3: Test the MQTT Connection
+
+```bash
+mosquitto_pub -h <broker address> -t <your topic> -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
+```
+
+Screen turns green = connection successful.
+
+## Step 4: Publish the Year Progress Bar
 
 ```bash
 cd apps/mqtt/year-progress-bar
 
-# 生成并发布：
-B64=$(python3 lab/render_year_progress.py) && mosquitto_pub -h <broker地址> -t <你的topic> -m "{\"duration\":31536000,\"text\":[],\"image\":[{\"data\":\"data:image/gif;base64,$B64\",\"position\":[0,0]}],\"draw\":[]}"
+# Generate and publish:
+B64=$(python3 lab/render_year_progress.py) && mosquitto_pub -h <broker address> -t <your topic> -m "{\"duration\":31536000,\"text\":[],\"image\":[{\"data\":\"data:image/gif;base64,$B64\",\"position\":[0,0]}],\"draw\":[]}"
 ```
 
-TC002 应该显示年进度条（48%）。
+The TC002 should now show the year progress bar (48%).
 
-## 第五步：定时更新（可选）
+## Step 5: Scheduled Updates (Optional)
 
-通过 Home Assistant Blueprint 可以每天自动更新进度条。导入 `blueprint.yaml` 即可。
+A Home Assistant blueprint can update the progress bar automatically every day. Just import `blueprint.yaml`.
 
-## 常见问题
+## FAQ
 
-### Q1: 屏幕不显示
+### Q1: Nothing shows on the screen
 
-- 确认设备 IP 正确
-- 确认 MQTT broker 地址正确
-- 在设备上手动切换到 `year_progress` 这个 Custom App
+- Check that the device IP is correct
+- Check that the MQTT broker address is correct
+- Manually switch to the `year_progress` custom app on the device
 
-### Q2: 进度不更新
+### Q2: The progress does not update
 
-- Blueprint 默认每天 8 点更新
-- 可以手动运行脚本刷新
+- By default the blueprint updates at 8 a.m. every day
+- You can run the script manually to refresh
 
-## 完成
+## Done
 
-现在 TC002 会显示今年的进度条，每天自动更新。
+The TC002 now shows this year's progress bar, updated automatically every day.

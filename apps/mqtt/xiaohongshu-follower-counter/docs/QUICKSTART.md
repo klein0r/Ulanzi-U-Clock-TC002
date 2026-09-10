@@ -1,27 +1,27 @@
-# 快速安装
+# Quick Install
 
-## 1. 准备 Home Assistant
+## 1. Prepare Home Assistant
 
-先配置 **Home Assistant MQTT 集成**，使它连接到 TC002 正在使用的同一个 MQTT broker。
+First configure the **Home Assistant MQTT integration** so that it connects to the same MQTT broker the TC002 is using.
 
-[![导入 Home Assistant Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
+[![Import the Home Assistant blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
 
-创建自动化时填写：
+When creating the automation, fill in:
 
-- 随机且保密的 `Webhook ID`；
-- `allowed_device_prefixes`，每行一个 TC002 前缀；
-- `app_name`，默认 `xiaohongshu_followers`。
+- a random, secret `Webhook ID`;
+- `allowed_device_prefixes`, one TC002 prefix per line;
+- `app_name`, default `xiaohongshu_followers`.
 
-## 2. 安装 Chrome 扩展
+## 2. Install the Chrome Extension
 
-下载 [xiaohongshu-follower-counter-chrome-0.2.0.zip](../release/xiaohongshu-follower-counter-chrome-0.2.0.zip) 和 [SHA256SUMS](../release/SHA256SUMS)，校验并解压。
+Download [xiaohongshu-follower-counter-chrome-0.2.0.zip](../release/xiaohongshu-follower-counter-chrome-0.2.0.zip) and [SHA256SUMS](../release/SHA256SUMS), verify the checksum and unzip.
 
-打开 `chrome://extensions`，启用开发者模式，点击“加载已解压的扩展程序”，选择解压后的目录。此版本暂未发布到 Chrome Web Store。
+Open `chrome://extensions`, enable developer mode, click "Load unpacked" and select the unpacked directory. This version has not yet been published to the Chrome Web Store.
 
-## 3. 配置设备
+## 3. Configure the Devices
 
-在扩展设置页填写 Home Assistant 地址、相同的 Webhook ID，以及每台 TC002 的设备 IP和对应的小红书主页。保存并允许 Chrome 访问所填的局域网地址。
+On the extension's options page, enter the Home Assistant address, the same webhook ID, and for each TC002 its device IP and the corresponding Xiaohongshu profile. Save, and allow Chrome to access the LAN address you entered.
 
-首次白名单不匹配时，“最近结果”仍会显示发现的 `devicePrefix`；复制到 `allowed_device_prefixes` 后保存 HA 自动化。刷新间隔最低为 5 分钟（300 秒），以降低小红书风控或屏蔽风险。
+If the allowlist does not match on the first attempt, "Latest result" will still show the discovered `devicePrefix`; copy it into `allowed_device_prefixes` and save the HA automation. The refresh interval has a minimum of 5 minutes (300 seconds), to reduce the risk of Xiaohongshu rate limiting or blocking.
 
-确认 TC002 的 MQTT/DIY 功能保持启用。完整证据链和故障排查见 [详细说明](README.md)。
+Make sure the TC002's MQTT/DIY function stays enabled. For the full evidence chain and troubleshooting, see the [detailed documentation](README.md).

@@ -1,91 +1,91 @@
-# Pixel Pet Display / 像素宠物展示窗
+# Pixel Pet Display
 
-## 简介
+## Introduction
 
-像素显示屏不用来养宠物可惜了！本APP名为像素宠物，是一个运行在 Pixbar TC002 上的 FlyThings 原生应用。它把 TC002 变成一个桌面互动像素宠物窗口，当前支持小猫、小狗和兔子三个宠物，并提供自动循环、走路、开心、吃饭和睡觉动画。
+It would be a shame not to keep a pet on a pixel display! This app, called Pixel Pet, is a native FlyThings application running on the Pixbar TC002. It turns the TC002 into an interactive desktop pixel pet window, currently supporting three pets — cat, dog and rabbit — with automatic idle loops as well as walking, happy, eating and sleeping animations.
 
-应用不依赖电脑端 WebUI，动画帧以内置 C++ 数据方式随固件一起编译，按键事件直接由设备顶部按键和旋钮触发。
+The app does not depend on a computer-side WebUI: the animation frames are compiled into the firmware as built-in C++ data, and button events are triggered directly by the buttons and knob on top of the device.
 
-## 效果预览
+## Preview
 
-下面的 GIF 使用本应用同一套 52 x 16 宠物动画帧生成，用于给大家预览主要交互效果：
+The GIF below is generated from the same set of 52 x 16 pet animation frames used by this app, to preview the main interactions:
 
 ![Pixel Pet Display](preview/pixel-pet-display.gif)
 
-GIF 覆盖以下动作：
+The GIF covers the following actions:
 
-- 旋钮切换小猫、小狗、兔子
-- 左键触发走路
-- 中键触发开心
-- 右键短按触发吃饭
-- 右键长按触发睡觉
+- Switching between cat, dog and rabbit with the knob
+- Left button triggers walking
+- Middle button triggers happy
+- Right button short press triggers eating
+- Right button long press triggers sleeping
 
-## 功能
+## Features
 
-- 支持三种宠物：小猫、小狗、兔子
-- 每个宠物支持自动生活循环
-- 支持顶部三按键触发互动动画
-- 支持旋钮切换当前宠物
-- 喂食动画会先让宠物走近饭碗，再让食物消失
+- Supports three pets: cat, dog and rabbit
+- Each pet has an automatic life loop
+- The three buttons on top trigger interactive animations
+- The knob switches the current pet
+- The feeding animation first walks the pet up to the food bowl, then makes the food disappear
 
-## 操作方式
+## Controls
 
-| 操作 | 动作 |
+| Input | Action |
 |---|---|
-| 旋钮顺时针 | 切换到下一个宠物 |
-| 旋钮逆时针 | 切换到上一个宠物 |
-| 旋钮按下 | 当前宠物回到自动循环 |
-| 左键 | 当前宠物走路 |
-| 中键 | 当前宠物开心 |
-| 右键短按 | 当前宠物吃饭 |
-| 右键长按（约 800ms 以上） | 当前宠物睡觉 |
+| Knob clockwise | Switch to the next pet |
+| Knob counter-clockwise | Switch to the previous pet |
+| Knob press | Return the current pet to its automatic loop |
+| Left button | The current pet walks |
+| Middle button | The current pet is happy |
+| Right button short press | The current pet eats |
+| Right button long press (approx. 800 ms or more) | The current pet sleeps |
 
-## 依赖
+## Dependencies
 
-- 硬件：Ulanzi TC002
-- 平台：Z21
-- 开发工具：FlyThings IDE
-- 依赖包：`easyui`、`log`、`zkhardware`、`base-utility`、`transfer-protocols`
+- Hardware: Ulanzi TC002
+- Platform: Z21
+- Development tool: FlyThings IDE
+- Dependency packages: `easyui`, `log`, `zkhardware`, `base-utility`, `transfer-protocols`
 
-已在以下环境验证过原型版本：
+The prototype version has been verified in the following environment:
 
-- 设备 SN：`B0D191008U3670007`
-- MCU 版本：`T1.0.13`
-- 应用版本：`0.2.9`
+- Device SN: `B0D191008U3670007`
+- MCU version: `T1.0.13`
+- App version: `0.2.9`
 
-## 安装与运行
+## Installation and Running
 
-1. 安装 FlyThings IDE。
-2. 在 IDE 中导入 `apps/flythings/pixel-pet-display/` 工程。
-3. 更新依赖包。
-4. 使用 IDE 编译工程。
-5. 通过 Wi-Fi ADB 下载调试到 TC002。
-6. 如需固化，使用镜像编译生成 `update.img`，并按官方说明通过 TF 卡升级。
+1. Install the FlyThings IDE.
+2. Import the `apps/flythings/pixel-pet-display/` project into the IDE.
+3. Update the dependency packages.
+4. Build the project in the IDE.
+5. Download and debug it on the TC002 over Wi-Fi ADB.
+6. To flash it permanently, build the image to produce `update.img` and upgrade via a TF card as described in the official documentation.
 
-## 配置
+## Configuration
 
-当前版本无需外部配置。
+The current version needs no external configuration.
 
-## 实现说明
+## Implementation Notes
 
-本应用使用 `PageBase::sendLedData()` 直接刷新 TC002 的 52 x 16 RGB LED 点阵。宠物动画来自已经预渲染好的 52 x 16 GIF，经脚本转换为非黑像素点列表后编译进 `src/assets/PetAnimationFrames.h`。
+This app uses `PageBase::sendLedData()` to refresh the TC002's 52 x 16 RGB LED matrix directly. The pet animations come from pre-rendered 52 x 16 GIFs, converted by a script into lists of non-black pixels and compiled into `src/assets/PetAnimationFrames.h`.
 
-为了保持运行时逻辑简单，当前版本将小猫、小狗、兔子做成同一 Activity 内的三个并列页面：
+To keep the runtime logic simple, the current version implements cat, dog and rabbit as three sibling pages within the same activity:
 
 - `CatPetPage`
 - `DogPetPage`
 - `RabbitPetPage`
 
-旋钮旋转只切换当前宠物，顶部按键只控制当前宠物动作。
+Turning the knob only switches the current pet, and the buttons on top only control the current pet's actions.
 
-## 素材来源与许可证
+## Asset Sources and License
 
-宠物基础像素素材来自 OpenGameArt 上的 CC0 资源，并经过重新裁剪、调色和组合生成 TC002 的 52 x 16 动画帧。详细说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
-可商用。
-本应用代码按 GPL-3.0-or-later 发布。
+The base pet pixel assets come from CC0 resources on OpenGameArt, and have been re-cropped, recolored and combined into the TC002's 52 x 16 animation frames. For details see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Commercial use is permitted.
+The code of this app is released under GPL-3.0-or-later.
 
-## 已知问题
+## Known Issues
 
-- 三套宠物帧资产以内置 C++ 头文件方式打包，源码体积较大。
-- 当前版本不支持在设备上新增自定义宠物。
-- 当前版本不持久化上一次选择的宠物，重新启动后默认回到小猫。
+- The three sets of pet frame assets are packed as built-in C++ header files, which makes the source code fairly large.
+- The current version does not support adding custom pets on the device.
+- The current version does not persist the last selected pet; after a restart it goes back to the cat by default.

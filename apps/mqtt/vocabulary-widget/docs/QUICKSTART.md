@@ -1,56 +1,56 @@
-# TC002 单词轮播 — 快速入门
+# TC002 Vocabulary Carousel — Quick Start
 
-5 分钟内让 TC002 显示英文单词。
+Get the TC002 showing English words in 5 minutes.
 
-## 前置条件
+## Prerequisites
 
-- [x] 已安装 Python 3 + Pillow
-- [x] 已安装 mosquitto
-- [x] TC002 设备已开机并连接 Wi-Fi
+- [x] Python 3 + Pillow installed
+- [x] mosquitto installed
+- [x] TC002 device powered on and connected to Wi-Fi
 
-## 第一步：获取设备信息
-
-```bash
-curl http://<设备IP>/getBase
-curl http://<设备IP>/getMqttConfig
-```
-
-## 第二步：计算 MQTT Topic
-
-```
-[mqtt_prefix]_[MAC后四位]/custom/vocabulary
-```
-
-## 第三步：测试 MQTT 连接
+## Step 1: Get the Device Information
 
 ```bash
-mosquitto_pub -h <broker地址> -t <你的topic> -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
+curl http://<device IP>/getBase
+curl http://<device IP>/getMqttConfig
 ```
 
-## 第四步：发送单词
+## Step 2: Work Out the MQTT Topic
+
+```
+[mqtt_prefix]_[last 4 digits of MAC]/custom/vocabulary
+```
+
+## Step 3: Test the MQTT Connection
+
+```bash
+mosquitto_pub -h <broker address> -t <your topic> -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
+```
+
+## Step 4: Send a Word
 
 ```bash
 cd apps/mqtt/vocabulary-widget
 
-# 指定单词：
+# A specific word:
 B64=$(python3 lab/render_vocabulary.py --word hello) && mosquitto_pub -h <broker> -t <topic> -m "{\"duration\":31536000,\"text\":[],\"image\":[{\"data\":\"data:image/gif;base64,$B64\",\"position\":[0,0]}],\"draw\":[]}"
 ```
 
-## 第五步：使用自己的词表
+## Step 5: Use Your Own Word List
 
 ```bash
-# 准备 CSV 文件，然后：
+# Prepare a CSV file, then:
 B64=$(python3 lab/render_vocabulary.py --source /path/to/words.csv --count 3) && mosquitto_pub -h <broker> -t <topic> -m "{\"duration\":31536000,\"text\":[],\"image\":[{\"data\":\"data:image/gif;base64,$B64\",\"position\":[0,0]}],\"draw\":[]}"
 ```
 
-## 常见问题
+## FAQ
 
-### Q1: 屏幕不显示
+### Q1: Nothing shows on the screen
 
-- 确认设备 IP 和 MQTT broker 正确
-- 在设备上手动切换到 `vocabulary` 这个 App
+- Check that the device IP and the MQTT broker are correct
+- Manually switch to the `vocabulary` app on the device
 
-### Q2: 中文显示不全
+### Q2: The Chinese text is cut off
 
-- 中文释义会自动截短到前两行
-- 保持释义简洁
+- Chinese definitions are automatically truncated to the first two lines
+- Keep the definitions short

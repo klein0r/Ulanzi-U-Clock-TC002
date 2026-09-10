@@ -1,120 +1,120 @@
-# Claude Bot 快速入门
+# Claude Bot Quick Start
 
-本文档帮助你在 5 分钟内让 TC002（U-Clock）显示 Claude Code 真实限额使用率。
+This document helps you get the TC002 (U-Clock) showing your real Claude Code quota usage in 5 minutes.
 
-## 前置条件
+## Prerequisites
 
-- [x] 已安装 Claude Code
-- [x] 已安装 Python 3（`python3 --version`）
-- [x] 已安装 pip（`pip3 --version`）
-- [x] TC002 设备已开机并连接 Wi-Fi
+- [x] Claude Code installed
+- [x] Python 3 installed (`python3 --version`)
+- [x] pip installed (`pip3 --version`)
+- [x] TC002 device powered on and connected to Wi-Fi
 
-## 第一步：安装依赖
+## Step 1: Install the Dependencies
 
 ```bash
-# 安装 Python Pillow 库（用于渲染 GIF）
+# Install the Python Pillow library (used to render the GIF)
 pip3 install pillow
 
-# 安装 mosquitto（MQTT 客户端）
-# macOS：
+# Install mosquitto (the MQTT client)
+# macOS:
 brew install mosquitto
 
-# Ubuntu/Debian：
+# Ubuntu/Debian:
 sudo apt install mosquitto-clients
 ```
 
-## 第二步：获取设备信息
+## Step 2: Get the Device Information
 
 ```bash
-# 查找你的 TC002 设备 IP
-# 方法 1：在 TC002 菜单中查看
-# 方法 2：查看路由器后台
+# Find your TC002's IP address
+# Option 1: look it up in the TC002 menu
+# Option 2: check your router's admin page
 
-# 假设设备 IP 是 10.19.1.128，获取设备信息：
+# Assuming the device IP is 10.19.1.128, get the device information:
 curl http://10.19.1.128/getBase
 ```
 
-输出示例：
+Example output:
 ```json
 {
   "devSn": "B0D191008U3670007",
-  "ssid": "你的Wi-Fi",
+  "ssid": "your Wi-Fi",
   "ip": "10.19.1.128",
-  "mac": "ccc4b2441bf6",  ← 记住这个 MAC 地址
+  "mac": "ccc4b2441bf6",  ← remember this MAC address
   "mcuVer": "T1.0.13",
   "appVer": "0.2.9"
 }
 ```
 
 ```bash
-# 获取 MQTT 配置：
+# Get the MQTT configuration:
 curl http://10.19.1.128/getMqttConfig
 ```
 
-输出示例：
+Example output:
 ```json
 {
   "isMqtt": true,
-  "ip": "10.19.1.58",      ← 这是你的 MQTT broker 地址
+  "ip": "10.19.1.58",      ← this is your MQTT broker address
   "port": "1883",
-  "mqtt_prefix": "ulanzi",  ← 记住这个前缀
+  "mqtt_prefix": "ulanzi",  ← remember this prefix
   "mqtt_name": "",
   "mqtt_pwd": ""
 }
 ```
 
-## 第三步：计算你的 MQTT Topic
+## Step 3: Work Out Your MQTT Topic
 
-根据上面获取的信息，计算 topic：
+Using the information collected above, work out the topic:
 
 ```
-[mqtt_prefix]_[MAC后四位]/custom/claude_bot
+[mqtt_prefix]_[last 4 digits of MAC]/custom/claude_bot
 ```
 
-示例：
-- MQTT 前缀：`ulanzi`
-- MAC 后四位：`1bf6`
-- Topic：`ulanzi_1bf6/custom/claude_bot`
+Example:
+- MQTT prefix: `ulanzi`
+- Last 4 digits of the MAC: `1bf6`
+- Topic: `ulanzi_1bf6/custom/claude_bot`
 
-## 第四步：克隆仓库
+## Step 4: Clone the Repository
 
 ```bash
 git clone https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002.git
 cd Ulanzi-U-Clock-TC002
 ```
 
-## 第五步：配置环境变量
+## Step 5: Configure the Environment Variables
 
-在 `~/.zshrc`（macOS）或 `~/.bashrc`（Linux）末尾添加：
-
-```bash
-# TC002 Claude Bot — MQTT 配置
-export TC002_MQTT_HOST=10.19.1.58        # 你的 MQTT broker 地址（从 getMqttConfig 获取）
-export TC002_MQTT_PORT=1883              # MQTT 端口（默认 1883）
-export TC002_MQTT_TOPIC=ulanzi_1bf6/custom/claude_bot  # 你的设备 topic（根据第三步计算）
-export TC002_DURATION=31536000           # 显示时长（秒），默认一年，保持常亮
-```
-
-然后重新加载配置：
+Add the following at the end of `~/.zshrc` (macOS) or `~/.bashrc` (Linux):
 
 ```bash
-source ~/.zshrc  # 或 source ~/.bashrc
+# TC002 Claude Bot — MQTT configuration
+export TC002_MQTT_HOST=10.19.1.58        # your MQTT broker address (from getMqttConfig)
+export TC002_MQTT_PORT=1883              # MQTT port (1883 by default)
+export TC002_MQTT_TOPIC=ulanzi_1bf6/custom/claude_bot  # your device topic (worked out in step 3)
+export TC002_DURATION=31536000           # display duration (seconds), one year by default, so it stays on permanently
 ```
 
-## 第六步：配置 Claude Code statusLine hook
+Then reload the configuration:
 
-编辑 `~/.claude/settings.json`，添加 `statusLine` 字段：
+```bash
+source ~/.zshrc  # or source ~/.bashrc
+```
+
+## Step 6: Configure the Claude Code statusLine Hook
+
+Edit `~/.claude/settings.json` and add a `statusLine` field:
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "node /你的仓库路径/apps/mqtt/claude-bot/lab/claude_statusline_bridge.js"
+    "command": "node /path/to/your/repo/apps/mqtt/claude-bot/lab/claude_statusline_bridge.js"
   }
 }
 ```
 
-**注意**：把 `/你的仓库路径/` 替换为实际路径，例如：
+**Note**: replace `/path/to/your/repo/` with the actual path, for example:
 
 ```json
 {
@@ -125,26 +125,26 @@ source ~/.zshrc  # 或 source ~/.bashrc
 }
 ```
 
-## 第七步：测试 MQTT 连接
+## Step 7: Test the MQTT Connection
 
 ```bash
-# 测试能否连接到 MQTT broker
+# Test whether you can connect to the MQTT broker
 mosquitto_pub -h $TC002_MQTT_HOST -t $TC002_MQTT_TOPIC -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
 ```
 
-如果 TC002 屏幕变绿，说明 MQTT 连接成功。
+If the TC002's screen turns green, the MQTT connection works.
 
-## 第八步：重启 Claude Code 并验证
+## Step 8: Restart Claude Code and Verify
 
 ```bash
-# 重启 Claude Code
-# 然后发送任意消息
+# Restart Claude Code
+# Then send any message
 
-# 检查状态文件是否生成：
+# Check whether the state file has been created:
 cat /tmp/claude-statusline-state.json
 ```
 
-应该看到类似：
+You should see something like:
 ```json
 {
   "timestamp": "2026-06-25T...",
@@ -155,51 +155,51 @@ cat /tmp/claude-statusline-state.json
 }
 ```
 
-## 第九步：手动触发一次发布
+## Step 9: Trigger a Publish Manually
 
 ```bash
 cd apps/mqtt/claude-bot
 bash lab/publish_usage.sh
 ```
 
-TC002 应该显示 Claude Bot 吉祥物 + 5H:0% / 7d:0%。
+The TC002 should show the Claude Bot mascot + 5H:0% / 7d:0%.
 
-## 常见问题
+## FAQ
 
-### Q1: TC002 屏幕不显示内容
+### Q1: Nothing shows on the TC002 screen
 
-**检查**：
-1. 确认设备 IP 正确：`curl http://<设备IP>/getBase`
-2. 确认 MQTT broker 地址正确：`curl http://<设备IP>/getMqttConfig`
-3. 确认 topic 格式正确：`[prefix]_[mac后四位]/custom/claude_bot`
-4. 在设备上手动切换到 `claude_bot` 这个 Custom App
+**Check**:
+1. That the device IP is correct: `curl http://<device IP>/getBase`
+2. That the MQTT broker address is correct: `curl http://<device IP>/getMqttConfig`
+3. That the topic format is correct: `[prefix]_[last 4 digits of MAC]/custom/claude_bot`
+4. Manually switch to the `claude_bot` custom app on the device
 
-### Q2: 状态文件显示 0%/0%
+### Q2: The state file shows 0%/0%
 
-**可能原因**：
-- Claude 订阅刚重置
-- Claude Code 没有正确报告限额（取决于订阅类型）
+**Possible causes**:
+- The Claude subscription has just reset
+- Claude Code is not reporting the quotas correctly (depends on the subscription type)
 
-**验证方法**：手动模拟数据测试链路：
+**How to verify**: test the chain with simulated data:
 ```bash
 echo '{"rate_limits":{"five_hour":{"used_percentage":50},"seven_day":{"used_percentage":30}},"model":{"display_name":"test"}}' | node apps/mqtt/claude-bot/lab/claude_statusline_bridge.js
 ```
 
-### Q3: MQTT 发布失败
+### Q3: MQTT publishing fails
 
-**检查**：
-1. MQTT broker 是否运行：`mosquitto_pub -h $TC002_MQTT_HOST -t test -m "hello"`
-2. 设备是否在同一局域网
-3. 防火墙是否阻止连接
+**Check**:
+1. Whether the MQTT broker is running: `mosquitto_pub -h $TC002_MQTT_HOST -t test -m "hello"`
+2. Whether the device is on the same local network
+3. Whether a firewall is blocking the connection
 
-### Q4: 屏幕熄灭
+### Q4: The screen turns off
 
-**解决**：确保 `TC002_DURATION` 设置为足够大的值（默认 31536000 秒 = 一年）。
+**Solution**: make sure `TC002_DURATION` is set to a large enough value (31536000 seconds = one year by default).
 
-## 完成
+## Done
 
-现在每次你使用 Claude Code，TC002 都会实时显示你的 5 小时/7 天限额使用率。
+From now on, every time you use Claude Code the TC002 shows your 5-hour/7-day quota usage in real time.
 
-- 绿色（< 70%）：正常
-- 黄色（70-90%）：注意
-- 红色（> 90%）：危险
+- Green (< 70%): normal
+- Yellow (70-90%): caution
+- Red (> 90%): danger

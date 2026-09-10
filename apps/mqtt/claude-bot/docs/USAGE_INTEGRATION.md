@@ -1,147 +1,147 @@
-# Claude Code 用量接入说明
+# Claude Code Usage Integration
 
-本文说明 `claude-bot` 如何接入真实 Claude Code 限额数据。
+This document explains how `claude-bot` hooks into real Claude Code rate limit data.
 
-> **完整安装指南**：见 [QUICKSTART.md](QUICKSTART.md)
+> **Full installation guide**: see [QUICKSTART.md](QUICKSTART.md)
 
-## 数据流
+## Data Flow
 
 ```text
 Claude Code statusLine hook
-  → claude_statusline_bridge.js（从 stdin 读取 JSON，提取限额百分比）
-  → render_usage.py（渲染 52x16 GIF）
-  → mosquitto_pub（MQTT 发布到 TC002）
+  → claude_statusline_bridge.js (reads the JSON from stdin, extracts the quota percentages)
+  → render_usage.py (renders the 52x16 GIF)
+  → mosquitto_pub (publishes to the TC002 over MQTT)
 ```
 
-## 安装步骤
+## Installation Steps
 
-### 前置条件
+### Prerequisites
 
-- [x] 已安装 Claude Code
-- [x] 已安装 Python 3 + Pillow
-- [x] 已安装 mosquitto（MQTT 客户端）
-- [x] TC002 设备已开机并连接 Wi-Fi
-- [x] 知道设备 IP 和 MQTT broker 地址
+- [x] Claude Code installed
+- [x] Python 3 + Pillow installed
+- [x] mosquitto installed (the MQTT client)
+- [x] TC002 device powered on and connected to Wi-Fi
+- [x] You know the device IP and the MQTT broker address
 
-### 1. 获取设备信息
+### 1. Get the Device Information
 
 ```bash
-# 获取设备基本信息（MAC 地址）
-curl http://<设备IP>/getBase
+# Get the basic device information (MAC address)
+curl http://<device IP>/getBase
 
-# 获取 MQTT 配置（broker 地址、前缀）
-curl http://<设备IP>/getMqttConfig
+# Get the MQTT configuration (broker address, prefix)
+curl http://<device IP>/getMqttConfig
 ```
 
-### 2. 计算 MQTT Topic
+### 2. Work Out the MQTT Topic
 
 ```
-[mqtt_prefix]_[MAC后四位]/custom/claude_bot
+[mqtt_prefix]_[last 4 digits of MAC]/custom/claude_bot
 ```
 
-示例：`ulanzi_1bf6/custom/claude_bot`
+Example: `ulanzi_1bf6/custom/claude_bot`
 
-### 3. 克隆仓库
+### 3. Clone the Repository
 
 ```bash
 git clone https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002.git
 cd Ulanzi-U-Clock-TC002
 ```
 
-### 4. 配置环境变量
+### 4. Configure the Environment Variables
 
-在 `~/.zshrc`（macOS）或 `~/.bashrc`（Linux）末尾添加：
+Add the following at the end of `~/.zshrc` (macOS) or `~/.bashrc` (Linux):
 
 ```bash
-# TC002 Claude Bot — MQTT 配置
-export TC002_MQTT_HOST=<你的MQTT broker地址>
+# TC002 Claude Bot — MQTT configuration
+export TC002_MQTT_HOST=<your MQTT broker address>
 export TC002_MQTT_PORT=1883
-export TC002_MQTT_TOPIC=<你的设备topic>
+export TC002_MQTT_TOPIC=<your device topic>
 export TC002_DURATION=31536000
 ```
 
-重新加载：
+Reload it:
 ```bash
-source ~/.zshrc  # 或 source ~/.bashrc
+source ~/.zshrc  # or source ~/.bashrc
 ```
 
-### 5. 配置 Claude Code statusLine hook
+### 5. Configure the Claude Code statusLine Hook
 
-编辑 `~/.claude/settings.json`，添加：
+Edit `~/.claude/settings.json` and add:
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "node /你的仓库路径/apps/mqtt/claude-bot/lab/claude_statusline_bridge.js"
+    "command": "node /path/to/your/repo/apps/mqtt/claude-bot/lab/claude_statusline_bridge.js"
   }
 }
 ```
 
-### 6. 测试 MQTT 连接
+### 6. Test the MQTT Connection
 
 ```bash
 mosquitto_pub -h $TC002_MQTT_HOST -t $TC002_MQTT_TOPIC -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
 ```
 
-屏幕变绿 = 连接成功。
+Screen turns green = connection successful.
 
-### 7. 重启 Claude Code 并验证
+### 7. Restart Claude Code and Verify
 
 ```bash
-# 重启 Claude Code，发送任意消息，然后检查：
+# Restart Claude Code, send any message, then check:
 cat /tmp/claude-statusline-state.json
 ```
 
-### 8. 手动触发一次发布
+### 8. Trigger a Publish Manually
 
 ```bash
 cd apps/mqtt/claude-bot
 bash lab/publish_usage.sh
 ```
 
-TC002 应该显示 Claude Bot + 5H:0% / 7d:0%。
+The TC002 should show Claude Bot + 5H:0% / 7d:0%.
 
-## 显示内容
+## What Is Displayed
 
-| 标签 | 含义 |
+| Label | Meaning |
 |---|---|
-| `5H` | 5 小时窗口限额使用率 (%) |
-| `7d` | 7 天窗口限额使用率 (%) |
+| `5H` | Usage of the 5-hour window quota (%) |
+| `7d` | Usage of the 7-day window quota (%) |
 
-颜色阈值：
+Color thresholds:
 
-| 范围 | 颜色 | 含义 |
+| Range | Color | Meaning |
 |---|---|---|
-| < 70% | 绿色 | 正常 |
-| 70–90% | 黄色 | 注意 |
-| > 90% | 红色 | 危险 |
+| < 70% | Green | Normal |
+| 70–90% | Yellow | Caution |
+| > 90% | Red | Danger |
 
-## 脚本分工
+## Division of Labor Between the Scripts
 
-| 脚本 | 职责 | 可独立使用 |
+| Script | Responsibility | Usable standalone |
 |---|---|---|
-| `claude_statusline_bridge.js` | 接收 statusLine JSON，提取限额，渲染 GIF，发布 MQTT | ✅ |
-| `render_usage.py` | 接收百分比，渲染 52×16 动画 GIF，输出 base64 | ✅ |
-| `publish_usage.sh` | 从状态文件或手动输入读取百分比，发布 MQTT | ✅ |
+| `claude_statusline_bridge.js` | Receives the statusLine JSON, extracts the quotas, renders the GIF, publishes over MQTT | ✅ |
+| `render_usage.py` | Takes the percentages, renders a 52×16 animated GIF, outputs base64 | ✅ |
+| `publish_usage.sh` | Reads the percentages from the state file or manual input and publishes over MQTT | ✅ |
 
-## 手动测试
+## Manual Testing
 
 ```bash
 cd apps/mqtt/claude-bot
 
-# 从状态文件读取并发布（推荐）：
+# Read from the state file and publish (recommended):
 bash lab/publish_usage.sh
 
-# 轮询模式（每 300 秒）：
+# Polling mode (every 300 seconds):
 bash lab/publish_usage.sh --loop 300
 ```
 
 ## MQTT Payload
 
-Bridge 发布的是 TC002 Custom App JSON payload。图片通过 `image` 字段以内嵌 base64 data URL 的方式发送。
+The bridge publishes a TC002 Custom App JSON payload. The image is sent through the `image` field as an inline base64 data URL.
 
-示例结构：
+Example structure:
 
 ```json
 {
@@ -157,29 +157,29 @@ Bridge 发布的是 TC002 Custom App JSON payload。图片通过 `image` 字段�
 }
 ```
 
-`duration` 默认为 31536000 秒（一年），确保画面持续显示不熄屏。
+`duration` defaults to 31536000 seconds (one year), so the image stays on screen instead of the display turning off.
 
-## 常见问题
+## FAQ
 
-### Q1: 状态文件显示 0%/0%
+### Q1: The state file shows 0%/0%
 
-**可能原因**：
-- Claude 订阅刚重置
-- Claude Code 没有正确报告限额（取决于订阅类型）
+**Possible causes**:
+- The Claude subscription has just reset
+- Claude Code is not reporting the quotas correctly (depends on the subscription type)
 
-**验证方法**：
+**How to verify**:
 ```bash
 echo '{"rate_limits":{"five_hour":{"used_percentage":50},"seven_day":{"used_percentage":30}},"model":{"display_name":"test"}}' | node apps/mqtt/claude-bot/lab/claude_statusline_bridge.js
 ```
 
-### Q2: 屏幕不显示内容
+### Q2: Nothing shows on the screen
 
-**检查**：
-1. 设备 IP 是否正确
-2. MQTT broker 地址是否正确
-3. Topic 格式是否正确
-4. 设备是否切换到 `claude_bot` 这个 Custom App
+**Check**:
+1. Whether the device IP is correct
+2. Whether the MQTT broker address is correct
+3. Whether the topic format is correct
+4. Whether the device has switched to the `claude_bot` custom app
 
-## 许可证
+## License
 
-GPL-3.0-or-later。
+GPL-3.0-or-later.

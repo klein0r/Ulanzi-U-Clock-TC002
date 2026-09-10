@@ -1,73 +1,73 @@
-# TC002 CI 状态看板
+# TC002 CI Status Board
 
-> **新用户？** 见 [QUICKSTART.md](QUICKSTART.md)
+> **New here?** See [QUICKSTART.md](QUICKSTART.md)
 
-## 简介
+## Introduction
 
-在 TC002（U-Clock）上显示 GitHub Actions CI 状态。
+Shows the GitHub Actions CI status on the TC002 (U-Clock).
 
-- 绿色：通过
-- 黄色：运行中
-- 红色：失败
+- Green: passing
+- Yellow: running
+- Red: failing
 
-**作者**：王行知
+**Author**: 王行知
 
-## 预览
+## Preview
 
-见 `preview/demo.gif`
+See `preview/demo.gif`
 
-## 依赖
+## Dependencies
 
-- Python 3 + Pillow（`pip install pillow`）
-- mosquitto_pub（`brew install mosquitto`）
-- MQTT broker（TC002 和你的电脑都能访问）
+- Python 3 + Pillow (`pip install pillow`)
+- mosquitto_pub (`brew install mosquitto`)
+- An MQTT broker (reachable from both the TC002 and your computer)
 
-## 安装
+## Installation
 
-### 方式一：Home Assistant Blueprint（推荐）
+### Option 1: Home Assistant Blueprint (Recommended)
 
-1. 导入 `blueprint.yaml` 到 Home Assistant
-2. 在 Blueprint 配置中填入：
-   - **GitHub 仓库**：要监控的仓库，格式 `owner/repo`
-   - **GitHub Token**（可选）：私有仓库需要
-   - **TC002 MQTT topic**：你的设备 topic
-3. Blueprint 会每 5 分钟自动检查并更新 CI 状态
+1. Import `blueprint.yaml` into Home Assistant
+2. Fill in the blueprint configuration:
+   - **GitHub repository**: the repository to monitor, in the form `owner/repo`
+   - **GitHub token** (optional): required for private repositories
+   - **TC002 MQTT topic**: your device's topic
+3. The blueprint automatically checks and updates the CI status every 5 minutes
 
-### 方式二：手动脚本
+### Option 2: Manual Script
 
-1. 在 `~/.zshrc` 中添加环境变量：
+1. Add the environment variables to `~/.zshrc`:
 
    ```bash
-   export TC002_MQTT_HOST=<你的MQTT broker地址>
+   export TC002_MQTT_HOST=<your MQTT broker address>
    export TC002_MQTT_TOPIC=ulanzi_1bf6/custom/ci_status
    export GITHUB_REPO=<owner/repo>
    ```
 
-2. 可选：设置 GitHub Token 获取私有仓库状态：
+2. Optional: set a GitHub token to get the status of private repositories:
 
    ```bash
    export GITHUB_TOKEN=ghp_xxx
    ```
 
-## 手动测试
+## Manual Testing
 
 ```bash
 cd apps/mqtt/ci-status-board
 
-# 从 GitHub 获取真实状态：
+# Fetch the real status from GitHub:
 B64=$(python3 lab/render_ci_status.py) && mosquitto_pub -h $TC002_MQTT_HOST -t $TC002_MQTT_TOPIC -m "{\"duration\":31536000,\"text\":[],\"image\":[{\"data\":\"data:image/gif;base64,$B64\",\"position\":[0,0]}],\"draw\":[]}"
 
-# Demo 模式：
+# Demo mode:
 B64=$(python3 lab/render_ci_status.py --status success --message "Fix bug") && mosquitto_pub -h $TC002_MQTT_HOST -t $TC002_MQTT_TOPIC -m "{\"duration\":31536000,\"text\":[],\"image\":[{\"data\":\"data:image/gif;base64,$B64\",\"position\":[0,0]}],\"draw\":[]}"
 ```
 
-## 参数说明
+## Parameters
 
-| 参数 | 说明 |
+| Parameter | Description |
 |------|------|
-| `--repo <owner/repo>` | 指定 GitHub 仓库 |
-| `--status <success/failure/running>` | 手动指定状态（Demo） |
-| `--message <文字>` | 手动指定 commit message（Demo） |
+| `--repo <owner/repo>` | Specify the GitHub repository |
+| `--status <success/failure/running>` | Set the status manually (demo) |
+| `--message <text>` | Set the commit message manually (demo) |
 
 ## MQTT Payload
 
@@ -80,11 +80,11 @@ B64=$(python3 lab/render_ci_status.py --status success --message "Fix bug") && m
 }
 ```
 
-## 已知问题
+## Known Issues
 
-- 需要手动配置要监控的仓库（`GITHUB_REPO`）。
-- TC002 收到 Custom App 更新后，不一定会自动切换到该 App。
+- The repository to monitor must be configured manually (`GITHUB_REPO`).
+- After receiving a Custom App update, the TC002 does not necessarily switch to that app automatically.
 
-## 许可证
+## License
 
-GPL-3.0-or-later。
+GPL-3.0-or-later.

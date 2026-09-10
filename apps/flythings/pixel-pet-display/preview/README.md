@@ -1,17 +1,17 @@
-# 预览素材
+# Preview Assets
 
-本目录已包含 PR 预览 GIF：
+This directory already contains the PR preview GIF:
 
 ```text
 pixel-pet-display.gif
 ```
 
-该 GIF 使用本应用同一套 52 x 16 宠物动画帧生成，展示：
+The GIF is generated from the same set of 52 x 16 pet animation frames used by this app, and demonstrates:
 
-- 旋钮切换小猫、小狗、兔子
-- 左键触发走路
-- 中键触发开心
-- 右键短按触发吃饭
-- 右键长按触发睡觉
+- Switching between cat, dog and rabbit with the knob
+- Left button triggers walking
+- Middle button triggers happy
+- Right button short press triggers eating
+- Right button long press triggers sleeping
 
-如果后续需要补充更严格的真机拍摄证据，可以用真机录制文件替换同名 GIF。
+If stricter evidence recorded on real hardware is needed later, the GIF can be replaced with a recording made on an actual device under the same file name.

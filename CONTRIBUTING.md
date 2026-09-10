@@ -1,65 +1,65 @@
-# 贡献指南
+# Contributing Guide
 
-感谢你对 **Ulanzi U-Clock TC002** 开源项目感兴趣！本文档说明如何把自己的代码贡献到本仓库。
+Thank you for your interest in the **Ulanzi U-Clock TC002** open source project! This document explains how to contribute your own code to this repository.
 
-本仓库目前接受**两种类型**的应用贡献：
+This repository currently accepts **two types** of app contributions:
 
-| 类型 | 说明 | 提交目录 |
+| Type | Description | Submission directory |
 |---|---|---|
-| **FlyThings 应用** | 直接运行在 TC002 设备上的 FlyThings IDE 工程，编译后烧录到设备 | `apps/flythings/<your-app-name>/` |
-| **MQTT 应用** | 主要为 **Home Assistant 蓝图（Blueprint）**，用户在自己的 HA 实例中一键导入，通过 MQTT 与 TC002 交互。也接受 Node-RED flow、openHAB rule 等其他基于 MQTT 的集成方案 | `apps/mqtt/<your-app-name>/` |
+| **FlyThings app** | A FlyThings IDE project that runs directly on the TC002 device, built and flashed onto the device | `apps/flythings/<your-app-name>/` |
+| **MQTT app** | Mostly **Home Assistant blueprints** that users import into their own HA instance with one click and use to interact with the TC002 over MQTT. Other MQTT-based integration approaches such as Node-RED flows and openHAB rules are also accepted | `apps/mqtt/<your-app-name>/` |
 
-> 应用名 `<your-app-name>` 用小写字母 + 数字 + 短横线，例如 `weather-clock`、`stock-ticker`、`battery-monitor`。同类型下不可重名。
+> Use lowercase letters + digits + hyphens for the app name `<your-app-name>`, for example `weather-clock`, `stock-ticker`, `battery-monitor`. Names must be unique within a type.
 >
-> 应用通过 review 合并后，会被收录到**根目录 [`README.md`](README.md) 的社区应用列表**（FlyThings 应用见"开源的项目"，MQTT 应用见"MQTT 应用"章节），作为 TC002 用户的上手入口之一。
+> Once an app passes review and is merged, it is added to the **community app list in the top-level [`README.md`](README.md)** (FlyThings apps under "What Is Open Source Here", MQTT apps under the "MQTT Apps" section), as one of the entry points for TC002 users.
 >
 
 
 ---
 
-## 通用要求（无论哪种类型都必须满足）
+## General Requirements (Mandatory for Both Types)
 
-### 1. 许可证兼容
+### 1. License Compatibility
 
-本仓库主体采用 **[GPL-3.0-or-later](LICENSE)**，因此你提交的应用必须使用以下任一**许可证之一**：
+The main body of this repository uses **[GPL-3.0-or-later](LICENSE)**, so the app you submit must use **one of the following licenses**:
 
-- GPL-3.0-or-later（推荐）
+- GPL-3.0-or-later (recommended)
 - GPL-2.0-or-later
-- LGPL-2.1-or-later、LGPL-3.0-or-later
+- LGPL-2.1-or-later, LGPL-3.0-or-later
 - Apache-2.0
-- MIT、BSD-2-Clause、BSD-3-Clause
-- 其他 [GPL-3.0 兼容许可证](https://www.gnu.org/licenses/license-list.html#GPLCompatibleLicenses)
+- MIT, BSD-2-Clause, BSD-3-Clause
+- Any other [GPL-3.0 compatible license](https://www.gnu.org/licenses/license-list.html#GPLCompatibleLicenses)
 
-许可证声明方式：
+How to declare the license:
 
-- **FlyThings 应用**：应用目录下放 `LICENSE` 文件，或在 `README.md` 顶部明确标注
-- **MQTT 应用**：在 `blueprint.yaml` 顶部加 `# SPDX-License-Identifier: <SPDX-ID>` 注释行；若与仓库主体许可证不同，额外在 `docs/LICENSE` 放许可证全文
+- **FlyThings apps**: put a `LICENSE` file in the app directory, or state it clearly at the top of `README.md`
+- **MQTT apps**: add a `# SPDX-License-Identifier: <SPDX-ID>` comment line at the top of `blueprint.yaml`; if it differs from the repository's main license, also put the full license text in `docs/LICENSE`
 
-### 2. 必备文件
+### 2. Required Files
 
-不同类型的必备文件略有差异：
+The required files differ slightly between the types:
 
-**FlyThings 应用** 顶层至少包含：
+A **FlyThings app** must contain at least the following at its top level:
 
 ```raw
 apps/flythings/<your-app-name>/
-├── README.md          # 应用介绍、编译/运行说明、截图
-├── manifest.json      # 应用元信息（见下）
-└── LICENSE            # GPL-3.0 兼容许可证全文
+├── README.md          # App introduction, build/run instructions, screenshots
+├── manifest.json      # App metadata (see below)
+└── LICENSE            # The full text of a GPL-3.0 compatible license
 ```
 
-**MQTT 应用**（HA 蓝图）顶层至少包含：
+An **MQTT app** (HA blueprint) must contain at least the following at its top level:
 
 ```raw
 apps/mqtt/<your-app-name>/
-├── blueprint.yaml     # HA 蓝图主文件，元信息直接写在 blueprint: 段
-├── preview/           # 至少一张运行截图或 GIF
-└── docs/              # 含 README + 许可证声明
+├── blueprint.yaml     # The main HA blueprint file; metadata goes directly into the blueprint: section
+├── preview/           # At least one screenshot or GIF of it running
+└── docs/              # Contains the README + the license declaration
 ```
 
-> MQTT 类不强制独立 `manifest.json` / `LICENSE` / 顶层 `README.md`，元信息与许可声明统一通过 `blueprint.yaml` 的注释头与 `blueprint:` 段承载，文档在 `docs/` 里展开。详见后文 "MQTT 应用规范"。
+> Unlike FlyThings apps, MQTT apps do not require a separate `manifest.json` / `LICENSE` / top-level `README.md`; metadata and the license declaration are carried by the comment header and the `blueprint:` section of `blueprint.yaml`, with the documentation laid out under `docs/`. See "MQTT App Guidelines" below for details.
 
-### 3. `manifest.json` 格式（FlyThings 应用专用）
+### 3. `manifest.json` Format (FlyThings Apps Only)
 
 ```json
 {
@@ -69,86 +69,86 @@ apps/mqtt/<your-app-name>/
   "type": "flythings",
   "author": "Your Name <your@email.com>",
   "license": "GPL-3.0-or-later",
-  "description": "在主页上展示当前天气与未来三日预报。",
+  "description": "Shows the current weather and a three-day forecast on the home screen.",
   "tags": ["weather", "clock", "home"],
   "minFirmware": "1.0.0",
   "homepage": "https://github.com/your-user/your-repo"
 }
 ```
 
-字段说明：
+Field descriptions:
 
-| 字段 | 必填 | 说明 |
+| Field | Required | Description |
 |---|:-:|---|
-| `name` | ✅ | 与目录名一致 |
-| `displayName` | ✅ | UI 展示名（支持中文） |
-| `version` | ✅ | 语义化版本 |
-| `type` | ✅ | 固定为 `flythings` |
-| `author` | ✅ | 作者署名 + 联系方式 |
-| `license` | ✅ | SPDX 标识符，必须 GPL-3.0 兼容 |
-| `description` | ✅ | 一句话功能描述 |
-| `tags` | ⬜ | 类别标签，便于检索 |
-| `minFirmware` | ⬜ | 所需最低固件版本 |
-| `homepage` | ⬜ | 个人项目主页 / 文档链接 |
+| `name` | ✅ | Must match the directory name |
+| `displayName` | ✅ | The name shown in the UI (Chinese is supported) |
+| `version` | ✅ | Semantic version |
+| `type` | ✅ | Always `flythings` |
+| `author` | ✅ | Author credit + contact details |
+| `license` | ✅ | SPDX identifier; must be GPL-3.0 compatible |
+| `description` | ✅ | A one-line description of what it does |
+| `tags` | ⬜ | Category tags, to make it easier to find |
+| `minFirmware` | ⬜ | The minimum firmware version required |
+| `homepage` | ⬜ | A link to your own project page / documentation |
 
-### 4. README 模板要求
+### 4. README Template Requirements
 
-每个应用 `README.md` 至少包含以下章节：
+Every app's `README.md` must contain at least the following sections:
 
-- **简介** — 应用做什么，解决什么需求
-- **截图或视频** — 真机运行效果（至少一张静态图，动效推荐 GIF）
-- **依赖** — 需要的第三方库、固件版本、外部 API
-- **安装与运行** — 编译/部署步骤，能让别人原样跑起来
-- **配置** — 如有配置文件或环境变量，逐项说明
-- **已知问题** — 不可避免的局限或待办
+- **Introduction** — what the app does and which need it addresses
+- **Screenshots or video** — how it looks on real hardware (at least one still image; a GIF is recommended for animations)
+- **Dependencies** — the third-party libraries, firmware versions and external APIs required
+- **Installation and running** — build/deployment steps that let someone else run it as-is
+- **Configuration** — if there are configuration files or environment variables, describe each of them
+- **Known issues** — unavoidable limitations or open to-dos
 
-### 5. 不接受的内容
+### 5. What Is Not Accepted
 
-- 闭源二进制（除非属于明确声明的第三方依赖）
-- 包含恶意行为、隐私窃取、未经授权访问的代码
-- 侵权资源（未授权的图片、字体、音频）
-- 与 TC002 业务无关的"凑数"项目
+- Closed-source binaries (unless they are clearly declared third-party dependencies)
+- Code containing malicious behavior, privacy theft or unauthorized access
+- Infringing resources (unlicensed images, fonts, audio)
+- "Filler" projects unrelated to the TC002
 
 ---
 
-## FlyThings 应用规范
+## FlyThings App Guidelines
 
-> 参考完整示例：[`Z21_TC002_Demo/`](Z21_TC002_Demo/)
+> For a complete reference example: [`Z21_TC002_Demo/`](Z21_TC002_Demo/)
 
-### 目录结构
+### Directory Structure
 
 ```raw
 apps/flythings/<your-app-name>/
 ├── README.md
 ├── manifest.json
 ├── LICENSE
-├── Manifest.xml          # FlyThings 项目清单
-├── ui/                   # *.ftu 界面文件
+├── Manifest.xml          # The FlyThings project manifest
+├── ui/                   # *.ftu interface files
 ├── src/
-│   ├── Main.cpp          # 入口
-│   ├── activity/         # IDE 自动生成，禁止手改
-│   ├── logic/            # 界面事件逻辑
-│   ├── managers/         # 自定义管理器（可选）
-│   ├── pages/            # 自定义页面（可选）
-│   └── utils/            # 工具类（可选）
-└── resources/            # 随固件打包的资源（图片、音频等）
+│   ├── Main.cpp          # Entry point
+│   ├── activity/         # Generated automatically by the IDE, do not edit by hand
+│   ├── logic/            # UI event logic
+│   ├── managers/         # Custom managers (optional)
+│   ├── pages/            # Custom pages (optional)
+│   └── utils/            # Utility classes (optional)
+└── resources/            # Resources packaged with the firmware (images, audio, etc.)
 ```
 
-### 提交前必须满足
+### Requirements Before Submitting
 
-1. **能在 FlyThings IDE 中无错编译**，并在真机或 TF 卡启动模式下运行通过。真机验证用 Wi-Fi ADB `下载调试`（`Ctrl+Alt+R`，不固化），或 `镜像编译` 生成 `update.img` 放 FAT32 TF 卡根目录插卡升级——具体步骤见根目录 [`README.md`](README.md) 的[二次开发](README.md#7-二次开发)章节
-2. **不要提交 `Release/` 编译产物**（在子目录 `.gitignore` 里加 `Release/`）
-3. **不要修改 `src/activity/` 下 IDE 自动生成的代码**
-4. **入口必须设置防砖标志**（参考 [`Z21_TC002_Demo/README.md`](Z21_TC002_Demo/README.md) 的"注意事项"）：
+1. **It builds without errors in the FlyThings IDE** and runs successfully on real hardware or in TF card boot mode. For real-device verification use Wi-Fi ADB `Download and debug` (`Ctrl+Alt+R`, not persistent), or `Image build` to produce `update.img`, put it in the root of a FAT32 TF card and upgrade from the card — for the exact steps see the [Custom Development](README.md#7-custom-development) section of the top-level [`README.md`](README.md)
+2. **Do not commit `Release/` build output** (add `Release/` to the `.gitignore` in your subdirectory)
+3. **Do not modify the code generated automatically by the IDE under `src/activity/`**
+4. **The entry point must set the anti-brick flag** (see the "Notes" section of [`Z21_TC002_Demo/README.md`](Z21_TC002_Demo/README.md)):
 
    #include <os/SystemProperties.h>
    SystemProperties::setString("sys.zkapp.state", "running");
 
-5. **`Manifest.xml` 中 `platform` 必须是 `Z21`**（这是 TC002 的平台标识）
+5. **`platform` in `Manifest.xml` must be `Z21`** (this is the TC002's platform identifier)
 
-### 源文件许可声明（推荐）
+### Per-File License Declaration (Recommended)
 
-在每个 `*.cpp` / `*.h` / `*.cc` 文件顶部加 SPDX 注释：
+Add an SPDX comment at the top of every `*.cpp` / `*.h` / `*.cc` file:
 
 ```cpp
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -157,47 +157,47 @@ apps/flythings/<your-app-name>/
 
 ---
 
-## MQTT 应用规范
+## MQTT App Guidelines
 
-### 目录结构
+### Directory Structure
 
 ```raw
 apps/mqtt/<your-app-name>/
-├── blueprint.yaml         # 必填：HA 蓝图主文件，元信息写在 blueprint: 段
-├── icons/                 # 可选：TC002 显示用的 8x8 像素图标 (*.png / *.gif)
-├── preview/               # 必填：至少一张运行效果截图或 GIF
+├── blueprint.yaml         # Required: the main HA blueprint file; metadata goes in the blueprint: section
+├── icons/                 # Optional: 8x8 pixel icons for the TC002 display (*.png / *.gif)
+├── preview/               # Required: at least one screenshot or GIF of it running
 │   └── demo.gif
-└── docs/                  # 必填：README + 许可证声明 + 详细说明
-    ├── README.md          # 应用文档（含 Open-in-HA 按钮、参数说明、MQTT topic 列表）
-    └── LICENSE            # 可选：若蓝图采用与仓库主体不同的许可证，在此声明
+└── docs/                  # Required: README + license declaration + detailed documentation
+    ├── README.md          # The app documentation (including the Open-in-HA button, parameter descriptions and the list of MQTT topics)
+    └── LICENSE            # Optional: declare it here if the blueprint uses a different license from the repository's main one
 ```
 
-> 与 FlyThings 类不同，MQTT 类**不需要**单独的 `manifest.json` —— 元信息（名称、描述、作者、许可证等）由 `blueprint.yaml` 的 `blueprint:` 段及文件顶部的 SPDX 注释承载。
+> Unlike FlyThings apps, MQTT apps do **not** need a separate `manifest.json` — the metadata (name, description, author, license and so on) is carried by the `blueprint:` section of `blueprint.yaml` and the SPDX comment at the top of the file.
 >
-> **非 HA 蓝图类型**（Node-RED flow、openHAB rule 等）把 `blueprint.yaml` 替换为对应的核心文件，例如 `flow.json`、`rule.yaml`；其他要求一致。
+> **For non-HA-blueprint types** (Node-RED flows, openHAB rules and so on), replace `blueprint.yaml` with the corresponding core file, for example `flow.json` or `rule.yaml`; all other requirements are the same.
 
-### Home Assistant 蓝图特别要求
+### Specific Requirements for Home Assistant Blueprints
 
-#### 1. 蓝图文件必须可直接被 HA 解析，元信息写在文件中
+#### 1. The blueprint file must be directly parseable by HA, with the metadata written into the file
 
 ```yaml
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 Your Name <your@email.com>
 #
-# TC002 Battery Monitor — 当手机电量低于阈值时在 TC002 上闪烁提醒
+# TC002 Battery Monitor — flashes a reminder on the TC002 when the phone battery drops below a threshold
 # Homepage: https://github.com/your-user/your-repo
 
 blueprint:
   name: TC002 Battery Monitor
   description: |
-    当手机电量低于阈值时在 TC002 上闪烁提醒。
+    Flashes a reminder on the TC002 when the phone battery drops below a threshold.
     Author: Your Name <your@email.com>
     License: GPL-3.0-or-later
   domain: automation
   source_url: https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/battery-monitor/blueprint.yaml
   input:
     battery_sensor:
-      name: 电池传感器
+      name: Battery sensor
       selector:
         entity:
           domain: sensor
@@ -212,50 +212,50 @@ action:
   - service: mqtt.publish
     data:
       topic: tc002/notify
-      payload: '{"text":"低电量!","icon":42,"duration":10}'
+      payload: '{"text":"Low battery!","icon":42,"duration":10}'
 ```
 
-- 文件顶部 **必须**带 SPDX 注释行声明许可证与版权
-- `blueprint.name` / `blueprint.description` 必填；建议在 `description` 段冗余写一遍作者与许可证，便于 HA 用户在导入对话框里直接看到
-- `source_url` **必填**，指向蓝图在本仓库的 raw URL（合并后由维护者协助补全）
-- `domain` 通常为 `automation`、`script` 或 `template`
-- 所有可调参数走 `input` 段，**不要在 trigger/action 里硬编码用户值**
+- The top of the file **must** carry SPDX comment lines declaring the license and copyright
+- `blueprint.name` / `blueprint.description` are required; it is recommended to repeat the author and license in the `description` section so that HA users see them directly in the import dialog
+- `source_url` is **required** and should point to the blueprint's raw URL in this repository (the maintainers will help fill it in after merging)
+- `domain` is usually `automation`, `script` or `template`
+- All adjustable parameters go through the `input` section — **do not hard-code user values in trigger/action**
 
-#### 2. `docs/README.md` 必须包含一键导入按钮
+#### 2. `docs/README.md` must contain the one-click import button
 
-在 `docs/README.md` 顶部嵌入 "Open in HA" 徽章。模板：
+Embed the "Open in HA" badge at the top of `docs/README.md`. Template:
 
 ```markdown
 [![Open your Home Assistant instance and show the blueprint import dialog.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2F<your-app-name>%2Fblueprint.yaml)
 ```
 
-其中 `<your-app-name>` 替换为你的目录名，整段 URL 中的 `/` 用 `%2F` 转义。
+Replace `<your-app-name>` with your directory name, and escape every `/` in the URL as `%2F`.
 
-合并后，用户点击徽章即跳转到自己的 HA 实例打开导入对话框。
+After merging, clicking the badge takes the user to the import dialog in their own HA instance.
 
-#### 3. 与 TC002 的 MQTT 通信约定
+#### 3. MQTT Communication Conventions for the TC002
 
-> ⚠️ **该章节待官方补充：** TC002 标准 MQTT topic 与 payload schema 将在固件 vX.Y.Z 后正式发布。在标准发布前，请：
+> ⚠️ **This section is still to be completed by Ulanzi:** the standard TC002 MQTT topics and payload schema will be published officially after firmware vX.Y.Z. Until the standard is published, please:
 >
-> - 在 `README.md` 中明确列出蓝图发布 / 订阅的所有 topic 及 payload 示例
-> - broker 地址在蓝图 `input` 中暴露为参数，**不要硬编码**
-> - payload 一律使用 UTF-8 JSON
+> - List all topics your blueprint publishes to / subscribes to, with example payloads, in `README.md`
+> - Expose the broker address as a parameter in the blueprint's `input` — **do not hard-code it**
+> - Always encode payloads as UTF-8 JSON
 
-### 提交前必须满足
+### Requirements Before Submitting
 
-1. **可在 HA 中成功导入**：把 `blueprint.yaml` 上传到自己的 HA 实例，导入并运行通过
-2. **真机验证**：截图或 GIF 必须是真实 TC002 设备上的运行画面
-3. **参数化**：所有用户可能想改的值（broker、topic、显示文字、阈值、颜色等）走蓝图 `input`
-4. **零硬编码凭证**：示例代码、文档、blueprint.yaml 中**禁止**出现真实的 broker 密码、API key
-5. **图标命名**：若提交 `icons/`，文件名用小写英文 + 短横线（`battery-low.png`），并在 `docs/README.md` 中登记图标清单（MQTT 类不设 `manifest.json`，元信息由 `blueprint.yaml` 承载）
+1. **It can be imported into HA successfully**: upload `blueprint.yaml` to your own HA instance, import it and run it successfully
+2. **Real-device verification**: the screenshots or GIFs must show it running on a real TC002 device
+3. **Parameterization**: every value a user might want to change (broker, topic, display text, thresholds, colors, etc.) goes through the blueprint's `input`
+4. **No hard-coded credentials**: real broker passwords and API keys are **forbidden** in sample code, documentation and blueprint.yaml
+5. **Icon naming**: if you submit `icons/`, use lowercase English + hyphens for the file names (`battery-low.png`) and list the icons in `docs/README.md` (MQTT apps have no `manifest.json`; the metadata is carried by `blueprint.yaml`)
 
 ---
 
-## 提交流程
+## Submission Process
 
 ### 1. Fork & Clone
 
-在 GitHub 上点 **Fork**，然后 clone 你的 fork：
+Click **Fork** on GitHub, then clone your fork:
 
 ```bash
 git clone https://github.com/<your-username>/Ulanzi-U-Clock-TC002.git
@@ -263,44 +263,44 @@ cd Ulanzi-U-Clock-TC002
 git remote add upstream https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002.git
 ```
 
-### 2. 创建分支
+### 2. Create a Branch
 
-分支命名规范：`<type>/<app-name>`，例如：
+Branch naming convention: `<type>/<app-name>`, for example:
 
 ```bash
 git checkout -b flythings/weather-clock
-# 或
+# or
 git checkout -b mqtt/home-assistant-bridge
 ```
 
-### 3. 开发并提交
+### 3. Develop and Commit
 
-在对应目录下完成你的应用。Commit 信息建议格式：
+Build your app in the corresponding directory. The recommended commit message format:
 
 ```raw
-<type>(<app-name>): <一句话说明>
+<type>(<app-name>): <one-line summary>
 
-可选的多行详细描述。
+An optional multi-line detailed description.
 
 Signed-off-by: Your Name <your@email.com>
 ```
 
-示例：
+Examples:
 
 ```raw
-feat(flythings/weather-clock): 初始版本，支持和风天气 API
+feat(flythings/weather-clock): initial version with QWeather API support
 
-- 主页显示当前气温与天气图标
-- 三日预报副页
+- Shows the current temperature and weather icon on the home screen
+- Three-day forecast on a secondary page
 ```
 ```raw
-feat(mqtt/battery-monitor): 添加手机电量低告警 HA 蓝图
+feat(mqtt/battery-monitor): add an HA blueprint for low phone battery alerts
 
-- 监听任意 device_class=battery 的传感器
-- 低于阈值时通过 MQTT 推送闪烁图标到 TC002
+- Watches any sensor with device_class=battery
+- Pushes a flashing icon to the TC002 over MQTT when it drops below the threshold
 ```
 
-### 4. 同步上游并 push
+### 4. Sync with Upstream and Push
 
 ```bash
 git fetch upstream
@@ -308,43 +308,43 @@ git rebase upstream/main
 git push origin flythings/weather-clock
 ```
 
-### 5. 发起 Pull Request
+### 5. Open a Pull Request
 
-在 GitHub 上从你的分支向 `UlanziTechnology/Ulanzi-U-Clock-TC002:main` 发起 PR，标题与首条 commit 一致。
+On GitHub, open a PR from your branch to `UlanziTechnology/Ulanzi-U-Clock-TC002:main`, with a title matching your first commit.
 
-PR 描述里请包含：
+Please include the following in the PR description:
 
-- [ ] 应用类型：FlyThings / MQTT
-- [ ] 已在真机 / 目标环境上验证运行
-- [ ] 已附运行截图或视频
-- [ ] 许可证 GPL-3.0 兼容
-- [ ] 已阅读并遵守本《贡献指南》
-
----
-
-## Review 流程
-
-1. **自动检查**：CI（如已配置）将校验目录结构、`manifest.json` 字段、文件大小等
-2. **维护者初审**：通常在 5 个工作日内给出首轮反馈
-3. **修改迭代**：根据反馈在同一分支补提交即可，不要新开 PR
-4. **合并**：通过 review 后由维护者 squash merge 进 `main`
-
-如果 PR 长期没有响应，欢迎在 PR 中 @ulanzi 团队成员或在 Issue 区提醒。
+- [ ] App type: FlyThings / MQTT
+- [ ] Verified on real hardware / the target environment
+- [ ] Screenshots or a video of it running are attached
+- [ ] The license is GPL-3.0 compatible
+- [ ] I have read and followed this Contributing Guide
 
 ---
 
-## 行为准则
+## Review Process
 
-- 在 Issue、PR、评论中保持友善、尊重、专业
-- 不接受人身攻击、骚扰、歧视言论
-- 维护者保留对违规账号的处置权（警告 / 屏蔽 / 删除内容）
+1. **Automated checks**: CI (where configured) validates the directory structure, the `manifest.json` fields, file sizes and so on
+2. **Initial maintainer review**: a first round of feedback is usually given within 5 working days
+3. **Iterating on changes**: just add commits to the same branch based on the feedback; do not open a new PR
+4. **Merging**: after passing review, a maintainer squash merges it into `main`
+
+If a PR gets no response for a long time, feel free to @ an Ulanzi team member in the PR or send a reminder in the issue tracker.
 
 ---
 
-## 联系方式
+## Code of Conduct
 
-- **GitHub Issues**：技术问题、Bug 报告、功能建议
-- **官方网站**：<https://www.ulanzi.com>
-- **开发者邮箱**：（待补充）
+- Be friendly, respectful and professional in issues, PRs and comments
+- Personal attacks, harassment and discriminatory language are not accepted
+- The maintainers reserve the right to act against offending accounts (warning / blocking / removing content)
 
-期待你的精彩作品 🎉
+---
+
+## Contact
+
+- **GitHub Issues**: technical questions, bug reports, feature suggestions
+- **Official website**: <https://www.ulanzi.com>
+- **Developer email**: (to be added)
+
+We look forward to your great work 🎉

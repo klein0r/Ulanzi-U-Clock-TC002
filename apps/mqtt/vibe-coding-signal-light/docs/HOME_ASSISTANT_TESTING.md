@@ -1,54 +1,54 @@
-# Home Assistant 与 TC002 MQTT 真机测试指南
+# Home Assistant and TC002 MQTT Real-Device Testing Guide
 
-本文说明如何在真实 TC002 设备上测试 `vibe-coding-signal-light`。
+This document explains how to test `vibe-coding-signal-light` on real TC002 hardware.
 
-作者：王行知
+Author: 王行知
 
-最短链路如下：
+The shortest chain looks like this:
 
 ```text
 Home Assistant -> MQTT broker -> TC002
 ```
 
-MQTT broker 可以理解为消息中转站。Home Assistant 把消息发给 broker，TC002 也连接到同一个 broker，并从对应 topic 收到显示内容。
+An MQTT broker can be thought of as a message relay station. Home Assistant sends messages to the broker, the TC002 connects to the same broker, and receives the content to display from the corresponding topic.
 
-## 1. 基本概念
+## 1. Basic Concepts
 
 ### MQTT broker
 
-MQTT broker 是一个轻量消息服务器。
+An MQTT broker is a lightweight message server.
 
-在这个应用里，它接收 Home Assistant 发布的 TC002 Custom App payload，再转发给 TC002。
+In this app it receives the TC002 Custom App payload published by Home Assistant and forwards it to the TC002.
 
-常见选择：
+Common choices:
 
-- Home Assistant Add-on 里的 Mosquitto broker
-- Mac、NAS 或服务器上运行的 Mosquitto
-- 家里已经在用的其他 MQTT broker
+- The Mosquitto broker Home Assistant add-on
+- Mosquitto running on a Mac, a NAS or a server
+- Any other MQTT broker you already use at home
 
 ### Topic
 
-topic 是 MQTT 消息地址。
+A topic is an MQTT message address.
 
-TC002 Custom App MQTT topic 通常是：
+The TC002 Custom App MQTT topic is usually:
 
 ```text
 [PREFIX]/custom/[APP_NAME]
 ```
 
-示例：
+Example:
 
 ```text
 ulanzi_1bf6/custom/vibe_signal
 ```
 
-`[PREFIX]` 通常由 MQTT 前缀和设备 MAC 后四位组成：
+`[PREFIX]` is usually made up of the MQTT prefix and the last four digits of the device's MAC address:
 
 ```text
-mqtt_prefix + "_" + MAC 后四位
+mqtt_prefix + "_" + last 4 digits of MAC
 ```
 
-如果 MQTT 前缀是 `ulanzi`，设备 MAC 后四位是 `1bf6`，则前缀通常是：
+If the MQTT prefix is `ulanzi` and the last four digits of the device MAC are `1bf6`, the prefix is usually:
 
 ```text
 ulanzi_1bf6
@@ -56,38 +56,38 @@ ulanzi_1bf6
 
 ### Payload
 
-payload 是 TC002 实际显示的 JSON 内容。
+The payload is the JSON content the TC002 actually displays.
 
-这个 Blueprint 发布的是 Custom App payload，里面包含一个小尺寸 PNG/GIF 图片。图片以 base64 data URL 形式直接放在 MQTT 消息里，所以 Home Assistant 只需要发布一条消息。
+This blueprint publishes a Custom App payload containing a small PNG/GIF image. The image is placed directly into the MQTT message as a base64 data URL, so Home Assistant only has to publish a single message.
 
-## 2. 推荐测试顺序
+## 2. Recommended Testing Order
 
-不要一开始就直接测完整 Home Assistant 自动化。推荐分层测试：
+Do not start by testing the complete Home Assistant automation. Testing layer by layer is recommended:
 
-1. 启动一个 MQTT broker。
-2. 确认本机可以向 broker 发布和订阅消息。
-3. 把 TC002 配到同一个 broker。
-4. 先手动发布一个黄灯 payload。
-5. 再导入 Home Assistant Blueprint。
-6. 最后用 Home Assistant 状态实体切换灯效。
+1. Start an MQTT broker.
+2. Confirm that your machine can publish to and subscribe from the broker.
+3. Point the TC002 at the same broker.
+4. Publish a yellow light payload manually first.
+5. Then import the Home Assistant blueprint.
+6. Finally, switch the light effects using the Home Assistant state entity.
 
-这样可以把 broker、topic、TC002 配置、Home Assistant 自动化几个问题拆开排查。
+That way you can troubleshoot the broker, the topic, the TC002 configuration and the Home Assistant automation separately.
 
-## 3. Mac 上用 Mosquitto 搭建 broker
+## 3. Setting Up a Broker with Mosquitto on a Mac
 
-安装 Mosquitto：
+Install Mosquitto:
 
 ```bash
 brew install mosquitto
 ```
 
-启动后台服务：
+Start the background service:
 
 ```bash
 brew services start mosquitto
 ```
 
-确认命令行工具可用：
+Check that the command-line tools are available:
 
 ```bash
 mosquitto -h
@@ -95,87 +95,87 @@ mosquitto_pub --help
 mosquitto_sub --help
 ```
 
-查看 Mac 的局域网 IP：
+Find the Mac's LAN IP:
 
 ```bash
 ipconfig getifaddr en0
 ```
 
-示例：
+Example:
 
 ```text
 10.19.1.58
 ```
 
-TC002 需要能访问这个 IP 的 `1883` 端口。
+The TC002 must be able to reach port `1883` on that IP.
 
-## 4. Broker 本地自测
+## 4. Local Broker Self-Test
 
-开一个终端订阅消息：
+Subscribe to messages in one terminal:
 
 ```bash
 mosquitto_sub -h 127.0.0.1 -t tc002/test
 ```
 
-另开一个终端发布消息：
+Publish a message in another terminal:
 
 ```bash
 mosquitto_pub -h 127.0.0.1 -t tc002/test -m "hello tc002"
 ```
 
-如果订阅窗口打印出 `hello tc002`，说明 broker 本地收发正常。
+If the subscribing window prints `hello tc002`, the broker sends and receives correctly on the local machine.
 
-## 5. 配置 TC002 MQTT
+## 5. Configure MQTT on the TC002
 
-在 TC002 的 MQTT 设置里填写：
+In the TC002's MQTT settings, enter:
 
 ```text
-Broker host: <Mac 局域网 IP>
+Broker host: <Mac LAN IP>
 Broker port: 1883
-Username: 本地测试可留空，除非 broker 要求认证
-Password: 本地测试可留空，除非 broker 要求认证
+Username: can be left empty for local testing, unless the broker requires authentication
+Password: can be left empty for local testing, unless the broker requires authentication
 MQTT prefix: ulanzi
 ```
 
-也可以用 HTTP 接口查看 TC002 当前网络和 MQTT 配置：
+You can also check the TC002's current network and MQTT configuration through the HTTP interface:
 
 ```bash
 curl http://<TC002_IP>/getBase
 curl http://<TC002_IP>/getMqttConfig
 ```
 
-如果 TC002 和 broker 不在同一个 Wi-Fi 或局域网里，设备收不到消息。
+If the TC002 and the broker are not on the same Wi-Fi or local network, the device will not receive any messages.
 
-## 6. 手动发布测试
+## 6. Manual Publish Test
 
-先算出 topic。
+First work out the topic.
 
-示例：
+Example:
 
 - MQTT prefix: `ulanzi`
-- TC002 MAC 后四位: `1bf6`
-- Custom App 名: `vibe_signal`
+- Last 4 digits of the TC002 MAC: `1bf6`
+- Custom app name: `vibe_signal`
 
-topic 为：
+The topic is:
 
 ```text
 ulanzi_1bf6/custom/vibe_signal
 ```
 
-先发布一个简单黄灯 payload，用来快速验证链路：
+Publish a simple yellow light payload first, to verify the chain quickly:
 
 ```bash
 mosquitto_pub -h 127.0.0.1 -t ulanzi_1bf6/custom/vibe_signal -m '{"duration":3600,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#000000"]},{"dfc":[26,8,5,"#FFCB52"]}]}'
 ```
 
-预期结果：
+Expected result:
 
-- TC002 收到 Custom App 更新。
-- 如果设备当前正在显示 `vibe_signal`，屏幕会变成黄灯。
+- The TC002 receives the Custom App update.
+- If the device is currently showing `vibe_signal`, the screen turns yellow.
 
-### 已验证结果
+### Verified Results
 
-以下环境已在 2026-06-23 验证通过：
+The following environment was verified successfully on 2026-06-23:
 
 ```text
 TC002 IP: 10.19.1.128
@@ -185,44 +185,44 @@ MQTT prefix: ulanzi
 Topic: ulanzi_1bf6/custom/vibe_signal
 ```
 
-通过 Mosquitto 向 topic 发布黄灯 Custom App payload 后，真实 TC002 屏幕成功变为黄灯。
+After publishing the yellow light Custom App payload to the topic via Mosquitto, the real TC002 screen successfully turned yellow.
 
-基础链路确认后，再用 Blueprint 里的图片 payload 或 Home Assistant 自动化测试最终效果。图片版本使用纯黑背景的红绿灯素材，观感会比简单 `draw` 探针更好。
+Once the basic chain is confirmed, test the final result with the image payload from the blueprint or with a Home Assistant automation. The image version uses traffic light assets on a pure black background and looks better than the simple `draw` probe.
 
-注意：
+Note:
 
-TC002 更新 Custom App 内容后，不一定自动切换到对应 App。如果屏幕没有变化，请先在设备上手动切到目标 Custom App，或者把消息发布到当前正在显示的 App 名。
+After a Custom App's content is updated, the TC002 does not necessarily switch to that app automatically. If the screen does not change, switch to the target custom app manually on the device first, or publish the message to the name of the app currently being displayed.
 
-## 7. Home Assistant 设置
+## 7. Home Assistant Setup
 
-### 方案 A：使用已有 Home Assistant
+### Option A: Use an Existing Home Assistant
 
-如果 Home Assistant 已经配置 MQTT 集成，直接使用现有 MQTT 集成即可。
+If Home Assistant already has the MQTT integration configured, just use the existing MQTT integration.
 
-如果还没有 MQTT：
+If you do not have MQTT yet:
 
-1. 如果你的 Home Assistant 安装方式支持 Add-on，可安装 Mosquitto broker Add-on。
-2. 创建 MQTT 用户名和密码。
-3. 添加 MQTT 集成。
-4. 把 TC002 配到同一个 broker。
+1. If your Home Assistant installation supports add-ons, install the Mosquitto broker add-on.
+2. Create an MQTT username and password.
+3. Add the MQTT integration.
+4. Point the TC002 at the same broker.
 
-### 方案 B：Mac broker + 现有 Home Assistant
+### Option B: Mac Broker + Existing Home Assistant
 
-也可以把 Mac 作为 broker，让 Home Assistant 和 TC002 都连接 Mac 的局域网 IP。
+You can also use the Mac as the broker and have both Home Assistant and the TC002 connect to the Mac's LAN IP.
 
-Home Assistant MQTT broker 设置：
+Home Assistant MQTT broker settings:
 
 ```text
-Broker: <Mac 局域网 IP>
+Broker: <Mac LAN IP>
 Port: 1883
-Username/password: 本地测试可留空，除非 broker 要求认证
+Username/password: can be left empty for local testing, unless the broker requires authentication
 ```
 
-TC002 MQTT broker 设置必须使用同一个 host 和 port。
+The TC002's MQTT broker settings must use the same host and port.
 
-## 8. 创建 Home Assistant 状态实体
+## 8. Create the Home Assistant State Entity
 
-第一次测试推荐创建一个 `input_select` helper，选项如下：
+For a first test it is recommended to create an `input_select` helper with the following options:
 
 ```text
 off
@@ -232,48 +232,48 @@ attention
 blocked
 ```
 
-这个 helper 就是 Blueprint 的“状态实体”。
+This helper is the blueprint's "state entity".
 
-## 9. 导入 Blueprint
+## 9. Import the Blueprint
 
-导入：
+Import:
 
 ```text
 apps/mqtt/vibe-coding-signal-light/blueprint.yaml
 ```
 
-然后用它创建自动化。
+Then create an automation from it.
 
-推荐配置：
+Recommended configuration:
 
 ```text
-状态实体: 上一步创建的 input_select helper
+State entity: the input_select helper created in the previous step
 TC002 Custom App MQTT topic: ulanzi_1bf6/custom/vibe_signal
-显示时长: 3600
-保留 MQTT 消息: false
+Display duration: 3600
+Retain MQTT message: false
 ```
 
-之后切换 helper 状态：
+Then switch the helper's state:
 
 ```text
-attention -> 黄灯
-blocked -> 红灯
-idle -> 绿灯
-working -> 绿、黄、红循环
-off -> 全黑熄灭
+attention -> yellow light
+blocked -> red light
+idle -> green light
+working -> green, yellow, red in a loop
+off -> all black, lights out
 ```
 
-## 10. 接入 Claude Code / Codex
+## 10. Integrating Claude Code / Codex
 
-确认 Home Assistant helper 能驱动 TC002 后，就可以把编程工具接进来。
+Once you have confirmed that the Home Assistant helper drives the TC002, you can hook up your coding tools.
 
-基本思路：
+The basic idea:
 
 ```text
-Claude Code / Codex hook -> 更新 input_select -> Blueprint 发布 MQTT -> TC002 显示
+Claude Code / Codex hook -> updates the input_select -> the blueprint publishes over MQTT -> the TC002 displays it
 ```
 
-推荐先用 Home Assistant API 手动测试：
+It is recommended to test manually with the Home Assistant API first:
 
 ```bash
 curl -X POST "http://<HA_HOST>:8123/api/services/input_select/select_option" \
@@ -282,64 +282,64 @@ curl -X POST "http://<HA_HOST>:8123/api/services/input_select/select_option" \
   -d '{"entity_id":"input_select.tc002_vibe_status","option":"attention"}'
 ```
 
-如果 TC002 变成黄灯，说明 Code Agent hook 只需要在对应时机调用这类命令即可。
+If the TC002 turns yellow, the code agent hook only needs to run a command like this at the right moments.
 
-建议映射：
+Suggested mapping:
 
-| 工具事件 | 状态 |
+| Tool event | State |
 |---|---|
-| 用户提交任务、开始执行、工具调用中 | `attention` |
-| 权限请求、失败、阻塞 | `blocked` |
-| 任务正常结束 | `idle`，几秒后 `off` |
+| User submits a task, execution starts, a tool is being called | `attention` |
+| Permission request, failure, blocked | `blocked` |
+| Task finished normally | `idle`, then `off` a few seconds later |
 
-更完整的说明见 `AGENT_HOOKS.md`。
+For a more complete guide, see `AGENT_HOOKS.md`.
 
-### 已验证的 webhook 链路
+### The Verified Webhook Chain
 
-本地测试中已验证下面这条链路：
+The following chain has been verified in local testing:
 
 ```text
 Claude Code hook -> Home Assistant webhook -> mqtt.publish -> Mosquitto -> TC002
 ```
 
-关键点：
+Key points:
 
-- Home Assistant 需要显式启用 `webhook:`。
-- webhook 自动化使用 `local_only: true`，只接受本机请求，适合本机 Claude Code / Codex 调试。
-- Claude Code hook 命令建议使用 `>/dev/null 2>&1 || true`，避免红绿灯脚本异常影响 Claude Code 正常启动或运行。
-- 不建议把 `SessionStart` 作为红绿灯 hook。启动阶段 hook 一旦异常，可能导致 Claude Code 无法启动。
+- Home Assistant needs `webhook:` explicitly enabled.
+- The webhook automation uses `local_only: true` and only accepts requests from the local machine, which suits debugging Claude Code / Codex on the same machine.
+- It is recommended to append `>/dev/null 2>&1 || true` to Claude Code hook commands, so that a failing traffic light script does not affect Claude Code starting or running normally.
+- Using `SessionStart` as a traffic light hook is not recommended. If a hook fails during the startup phase, Claude Code may fail to start.
 
-## 11. 排查问题
+## 11. Troubleshooting
 
-### MQTT 发布成功，但 TC002 不变化
+### MQTT publishes successfully but nothing changes on the TC002
 
-检查：
+Check:
 
-- TC002 和 broker 是否在同一个 Wi-Fi 或局域网。
-- TC002 MQTT broker host 是否正确。
-- topic 前缀是否匹配设备 MAC 后四位。
-- App 名是否匹配 TC002 当前显示的 Custom App。
-- broker 的 `1883` 端口是否可访问。
+- Whether the TC002 and the broker are on the same Wi-Fi or local network.
+- Whether the TC002's MQTT broker host is correct.
+- Whether the topic prefix matches the last four digits of the device's MAC address.
+- Whether the app name matches the custom app currently displayed on the TC002.
+- Whether port `1883` on the broker is reachable.
 
-### Home Assistant 自动化执行了，但 broker 没收到消息
+### The Home Assistant automation ran but the broker received no message
 
-订阅目标 topic：
+Subscribe to the target topic:
 
 ```bash
 mosquitto_sub -h <BROKER_HOST> -t 'ulanzi_1bf6/custom/vibe_signal' -v
 ```
 
-然后切换 Home Assistant helper 状态。
+Then switch the Home Assistant helper's state.
 
-如果订阅窗口没有消息，问题通常在 Home Assistant 自动化或 MQTT 集成。
+If no message appears in the subscribing window, the problem is usually in the Home Assistant automation or the MQTT integration.
 
-### Broker 本地正常，但 TC002 收不到
+### The broker works locally but the TC002 receives nothing
 
-检查 macOS 防火墙、路由器 AP 隔离、访客网络隔离等。部分 Wi-Fi 会阻止局域网设备互相访问。
+Check the macOS firewall, router AP isolation, guest network isolation and similar. Some Wi-Fi networks block devices on the LAN from reaching each other.
 
-### 显示颜色不对
+### The colors are wrong
 
-确认状态实体的状态文本精确匹配以下值之一：
+Make sure the state entity's state text matches exactly one of the following values:
 
 ```text
 off
@@ -349,53 +349,53 @@ attention
 blocked
 ```
 
-如果你改了 Blueprint 里的状态值配置，请确认实体输出也同步修改。
+If you changed the state value configuration in the blueprint, make sure the entity's output was changed accordingly.
 
-### 手机拍视频时出现频闪
+### Flicker when filming with a phone
 
-TC002 是 LED 点阵屏，通常会通过行列扫描和 PWM 调光显示画面。iPhone 拍视频时，传感器滚动快门、视频帧率、曝光时间可能和 LED 刷新节奏不同步，于是视频里会出现频闪、亮度跳动或横向暗纹。
+The TC002 is an LED matrix display and normally shows the image using row/column scanning and PWM dimming. When filming with an iPhone, the sensor's rolling shutter, the video frame rate and the exposure time may not be in sync with the LED refresh rhythm, which makes flicker, brightness jumps or horizontal dark bands appear in the video.
 
-这类现象常见于拍摄 LED 屏、车灯、显示屏、舞台灯，不一定代表肉眼看到的画面也在频闪。可以尝试：
+This is common when filming LED screens, car lights, displays and stage lighting, and does not necessarily mean the image flickers to the naked eye. Things you can try:
 
-- 在 iPhone 相机里切换 30fps / 60fps。
-- 关闭自动曝光后手动拉低曝光。
-- 改变拍摄距离和角度。
-- 提高环境光，减少相机自动拉高快门或 ISO。
-- 如果固件或设备设置支持，尝试调整屏幕亮度。
+- Switch between 30fps / 60fps in the iPhone camera.
+- Turn off auto exposure and lower the exposure manually.
+- Change the shooting distance and angle.
+- Increase the ambient light so the camera does not raise the shutter speed or ISO automatically.
+- If the firmware or the device settings support it, try adjusting the screen brightness.
 
-## 12. 贡献前检查
+## 12. Pre-Contribution Checklist
 
-- `blueprint.yaml` 可以被 Home Assistant 导入。
-- `docs/README.md` 已说明依赖、安装、配置、topic。
-- `preview/demo.gif` 能展示实际灯效。
-- 至少完成一次真机或 broker 级别测试，并记录环境。
+- `blueprint.yaml` can be imported by Home Assistant.
+- `docs/README.md` documents the dependencies, installation, configuration and topic.
+- `preview/demo.gif` shows the actual light effects.
+- At least one test on real hardware or at the broker level has been completed, with the environment recorded.
 
-## 13. 三种 Code Agent 状态模拟
+## 13. Simulating the Three Code Agent States
 
-完成 Home Assistant webhook 或 helper 接入后，建议至少模拟三种真实使用状态：
+After integrating the Home Assistant webhook or helper, it is recommended to simulate at least three real usage states:
 
-| 模拟场景 | 状态值 | 预期显示 |
+| Simulated scenario | State value | Expected display |
 |---|---|---|
-| Code Agent 正在运行 / 调用工具 | `attention` | 黄灯闪烁 |
-| 需要用户输入 / 权限确认 / 报错 | `blocked` | 红灯闪烁 |
-| 一轮任务运行完成 | `idle`，随后 `off` | 绿灯短暂亮起，然后全黑 |
+| Code agent is running / calling a tool | `attention` | Flashing yellow light |
+| User input / permission confirmation needed, or an error | `blocked` | Flashing red light |
+| A round of work has completed | `idle`, then `off` | Green light briefly, then all black |
 
-如果你使用 webhook 链路，可以订阅 MQTT topic 观察消息：
+If you use the webhook chain, you can subscribe to the MQTT topic to watch the messages:
 
 ```bash
 mosquitto_sub -h <BROKER_HOST> -t 'ulanzi_1bf6/custom/vibe_signal' -v
 ```
 
-然后让 hook 依次发送：
+Then have the hook send, in order:
 
 ```text
-PreToolUse 或 UserPromptSubmit -> attention
-PermissionRequest 或 Error     -> blocked
-Stop 或 Done                   -> idle，几秒后 off
+PreToolUse or UserPromptSubmit -> attention
+PermissionRequest or Error     -> blocked
+Stop or Done                   -> idle, then off a few seconds later
 ```
 
-本项目实测时，`Claude Code hook -> Home Assistant webhook -> mqtt.publish -> Mosquitto -> TC002` 能按顺序触发：
+In this project's own testing, `Claude Code hook -> Home Assistant webhook -> mqtt.publish -> Mosquitto -> TC002` triggered the following sequence:
 
 ```text
-黄灯闪烁 -> 红灯闪烁 -> 绿灯 -> 全黑熄灭
+flashing yellow -> flashing red -> green -> all black
 ```

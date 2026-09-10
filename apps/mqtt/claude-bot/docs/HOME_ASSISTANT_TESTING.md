@@ -1,27 +1,27 @@
-# TC002 Claude Bot — 真机测试指南
+# TC002 Claude Bot — Real-Device Testing Guide
 
-本文说明如何在真实 TC002（U-Clock）设备上测试 `claude-bot`，验证真实 Claude Code 限额显示。
+This document explains how to test `claude-bot` on real TC002 (U-Clock) hardware and verify the display of real Claude Code rate limits.
 
-## 1. 基本概念
+## 1. Basic Concept
 
 ```text
 Claude Code → statusLine hook → MQTT broker → TC002
 ```
 
-## 2. MQTT broker
+## 2. MQTT Broker
 
-需要一个 TC002 和你的电脑都能访问的 MQTT broker。
+You need an MQTT broker that both the TC002 and your computer can reach.
 
-Mac 本地测试：
+Local testing on a Mac:
 
 ```bash
 brew install mosquitto
 brew services start mosquitto
 ```
 
-## 3. 配置 TC002 MQTT
+## 3. Configure MQTT on the TC002
 
-在 TC002 的 MQTT 设置里填写：
+In the TC002's MQTT settings, enter:
 
 ```text
 Broker host: <broker IP>
@@ -29,37 +29,37 @@ Broker port: 1883
 MQTT prefix: ulanzi
 ```
 
-查看 TC002 当前配置：
+To view the TC002's current configuration:
 
 ```bash
 curl http://<TC002_IP>/getMqttConfig
 ```
 
-## 4. Custom App topic
+## 4. Custom App Topic
 
-格式：
+Format:
 
 ```text
 [PREFIX]/custom/[APP_NAME]
 ```
 
-示例：
+Example:
 
 ```text
 ulanzi_1bf6/custom/claude_bot
 ```
 
-## 5. 测试 MQTT 连接
+## 5. Test the MQTT Connection
 
 ```bash
-# 测试屏幕变绿（验证连接）
+# Turn the screen green (to verify the connection)
 mosquitto_pub -h <BROKER_IP> -t ulanzi_1bf6/custom/claude_bot \
   -m '{"duration":31536000,"text":[],"image":[],"draw":[{"df":[0,0,52,16,"#00FF00"]}]}'
 ```
 
-## 6. 配置 statusLine hook
+## 6. Configure the statusLine Hook
 
-1. 在 `~/.claude/settings.json` 中添加：
+1. Add the following to `~/.claude/settings.json`:
 
    ```json
    {
@@ -70,52 +70,52 @@ mosquitto_pub -h <BROKER_IP> -t ulanzi_1bf6/custom/claude_bot \
    }
    ```
 
-2. 重启 Claude Code，发送任意消息后自动触发 hook。
+2. Restart Claude Code; the hook is triggered automatically after you send any message.
 
-3. 查看状态文件验证：
+3. Check the state file to verify:
 
    ```bash
    cat /tmp/claude-statusline-state.json
    ```
 
-## 7. 测试真实用量显示
+## 7. Test the Real Usage Display
 
 ```bash
 cd apps/mqtt/claude-bot
 
-# 从状态文件读取并发布：
+# Read from the state file and publish:
 TC002_MQTT_HOST=<broker IP> bash lab/publish_usage.sh
 ```
 
-TC002 应该显示 Claude Bot + 5H:XX% / 7d:XX%（真实限额数据）。
+The TC002 should show Claude Bot + 5H:XX% / 7d:XX% (real rate limit data).
 
-## 8. 分步调试
+## 8. Step-by-Step Debugging
 
 ```bash
-# 1. 手动渲染（不发布）
+# 1. Render manually (without publishing)
 python3 lab/render_usage.py 50 30 --file /tmp/claude_bot_usage.gif
 
-# 2. 用渲染出的 base64 手动发布
+# 2. Publish the rendered base64 manually
 python3 lab/render_usage.py 50 30 | xargs -I{} mosquitto_pub \
   -h <BROKER_IP> -t ulanzi_1bf6/custom/claude_bot \
   -m '{"duration":31536000,"text":[],"image":[{"data":"data:image/gif;base64,{}","position":[0,0]}],"draw":[]}'
 ```
 
-## 9. 轮询模式
+## 9. Polling Mode
 
 ```bash
 TC002_MQTT_HOST=<broker IP> bash lab/publish_usage.sh --loop 300
 ```
 
-## 10. 排障
+## 10. Troubleshooting
 
-### MQTT 发布成功但 TC002 不变化
+### MQTT publishes successfully but nothing changes on the TC002
 
-- 确认 TC002 和 broker 在同一局域网
-- 确认 topic 前缀匹配设备 MAC 后四位
-- 手动在 TC002 上切换到目标 Custom App
+- Check that the TC002 and the broker are on the same local network
+- Check that the topic prefix matches the last four digits of the device's MAC address
+- Manually switch to the target custom app on the TC002
 
-### broker 正常但 TC002 收不到
+### The broker works but the TC002 receives nothing
 
-- 检查 macOS 防火墙
-- 检查路由器 AP 隔离
+- Check the macOS firewall
+- Check for AP isolation on your router
