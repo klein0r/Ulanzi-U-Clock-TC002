@@ -1,5 +1,15 @@
 # Ulanzi U-Clock TC002 · Pixel Clock Open Source Resources
 
+> [!NOTE]
+> **This is an AI-translated fork.** The documentation, code comments and UI strings in
+> this repository were machine-translated from Chinese into English. The translation may
+> lag behind the original, and it may contain mistakes or subtly inaccurate wording —
+> please do not treat it as authoritative.
+>
+> For the original, canonical repository see
+> [UlanziTechnology/Ulanzi-U-Clock-TC002](https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002).
+> If anything here is unclear or looks wrong, check the original source first.
+
 The Ulanzi TC002 (Pixbar 2nd generation) is a **52×16 full-color RGB pixel desktop clock**: out of the box it can show weather, a pomodoro timer, social media follower counts and more through the official app, while also exposing the **MQTT / HTTP protocols**, so it can be connected to Home Assistant or Node-RED, or even turn the run state of Claude Code / Codex into a desktop traffic light. This repository holds the official open source resources: the sample project, MQTT apps, protocol documentation and development guides.
 
 > **Pick an entry point based on your goal**
