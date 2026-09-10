@@ -1,7 +1,7 @@
 /*
  * bluetooth_service.h
  *
- *  Created on: 2024年9月12日
+ *  Created on: 12 September 2024
  *      Author: pengzc
  */
 
@@ -15,13 +15,13 @@
 
 struct BluetoothParams {
   /**
-   * 该蓝牙被搜索时显示的蓝牙名称
+   * The Bluetooth name shown when this device is discovered
    */
   std::string name;
 
   typedef std::function<void (const std::string& msg)> MessageListener;
   /**
-   * 消息监听
+   * Message listener
    */
   MessageListener on_message;
 };
@@ -37,8 +37,8 @@ public:
   virtual void doTask(const BluetoothParams& params) override;
 
   /**
-   * 获取启动参数的蓝牙名称
-   * 如果服务已停止，则返回空字符串
+   * Get the Bluetooth name from the startup parameters
+   * Returns an empty string if the service has stopped
    * @return
    */
   std::string bluetoothName();

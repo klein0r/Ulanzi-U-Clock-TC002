@@ -68,11 +68,11 @@ static bool onUI_Timer(int id){
 
 static bool onwifiTestActivityTouchEvent(const MotionEvent &ev) {
     switch (ev.mActionStatus) {
-		case MotionEvent::E_ACTION_DOWN://触摸按下
+		case MotionEvent::E_ACTION_DOWN://Touch down
 			break;
-		case MotionEvent::E_ACTION_MOVE://触摸滑动
+		case MotionEvent::E_ACTION_MOVE://Touch move
 			break;
-		case MotionEvent::E_ACTION_UP:  //触摸抬起
+		case MotionEvent::E_ACTION_UP:  //Touch up
 			break;
 		default:
 			break;

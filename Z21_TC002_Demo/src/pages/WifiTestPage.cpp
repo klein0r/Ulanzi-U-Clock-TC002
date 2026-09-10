@@ -68,7 +68,7 @@ void WifiTestPage::stopTest() {
 }
 
 void WifiTestPage::testRoutine() {
-    // 扫描 WiFi，最长 30 秒
+    // Scan for WiFi, up to 30 seconds
     WIFIMANAGER->startScan();
 
     bool found = false;
@@ -98,7 +98,7 @@ void WifiTestPage::testRoutine() {
         return;
     }
 
-    // 连接 WiFi，最长 30 秒
+    // Connect to WiFi, up to 30 seconds
     WIFIMANAGER->connect(mSsid, mPassword);
     for (int i = 0; i < 60 && mRunning; i++) {
         if (WIFIMANAGER->isConnected()) {
@@ -137,7 +137,7 @@ void WifiTestPage::restartTest() {
 void WifiTestPage::draw() {
     Surface surface(DISPLAY_WIDTH, DISPLAY_HEIGHT, COLOR_BLACK);
 
-    // 实时轮询 BLE 连接状态
+    // Poll the BLE connection state in real time
     mBleState = BluetoothService::instance().isConnected() ? BLE_CONNECTED : BLE_IDLE;
 
     drawWifiSection(surface);

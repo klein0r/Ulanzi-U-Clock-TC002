@@ -17,51 +17,51 @@ public:
     McuManager& operator=(const McuManager&) = delete;
     
     /**
-     * @brief 初始化 MCU 实例
-     * @param mcu MCU 通信实例指针
+     * @brief Initialize the MCU instance
+     * @param mcu Pointer to the MCU communication instance
      */
     void initialize(PixelMcuProto::McuParse* mcu);
     
     /**
-     * @brief 检查是否已初始化
+     * @brief Check whether it has been initialized
      */
     bool isInitialized() const { return mMcu != nullptr; }
     
 
     void setMicValue(int value);
     /**
-     * @brief 查询麦克风值
-     * @return 麦克风值
+     * @brief Query the microphone value
+     * @return The microphone value
      */
     int queryMicValue();
     
     void setUsbState(int state);
     /**
-     * @brief 查询 USB 连接状态
-     * @return USB 状态
+     * @brief Query the USB connection state
+     * @return The USB state
      */
     int queryUsbState();
     
     void setBatteryState(const std::pair<int, int>& state);
     /**
-     * @brief 查询电池电量
-     * @return pair<电量百分比, 充电状态> (0-100, 0=未充电/1=充电中)
+     * @brief Query the battery level
+     * @return pair<battery percentage, charging state> (0-100, 0=not charging/1=charging)
      */
     std::pair<int, int> queryBatteryPower();
     
     /**
-     * @brief 设置Mic是否自动上报
+     * @brief Set whether the microphone reports automatically
      */
     void setAutoMicReport(bool sw);
     /**
-     * @brief 关机
+     * @brief Power off
      */
     void powerOff();
     
     /**
-     * @brief 查询 MCU 版本
-     * @param mcuVer 输出参数，MCU 版本字符串
-     * @return 0=成功, 其他=失败
+     * @brief Query the MCU version
+     * @param mcuVer Output parameter, the MCU version string
+     * @return 0=success, anything else=failure
      */
     int queryMcuVersion(std::string& mcuVer);
     

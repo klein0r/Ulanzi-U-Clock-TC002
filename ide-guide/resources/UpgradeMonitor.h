@@ -52,27 +52,27 @@ public:
 	} ESystemUpgradeType;
 
 	/**
-	 * 分区信息
+	 * Partition information
 	 */
 	typedef struct {
-		BYTE partn;			// 分区号
-		BYTE reserve[3];	// 保留
-		BYTE offset[4];		// 基于head的偏移
-		BYTE imageSize[4];	// 分区镜像大小
-		BYTE imageHead[16];	// image头数据 swap MD5
+		BYTE partn;			// Partition number
+		BYTE reserve[3];	// Reserved
+		BYTE offset[4];		// Offset relative to the head
+		BYTE imageSize[4];	// Partition image size
+		BYTE imageHead[16];	// Image header data swap MD5
 	} SPartInfo;
 
 	/**
-	 * 扩展信息
+	 * Extended information
 	 */
 	typedef struct {
-		BYTE size[4];		// 额外信息长度
-		BYTE perm;			// 权限
-		BYTE type;			// 机型
-		BYTE flag;			// 标记
-		BYTE attr;			// 加密信息相关
+		BYTE size[4];		// Length of the extra information
+		BYTE perm;			// Permissions
+		BYTE type;			// Device model
+		BYTE flag;			// Flags
+		BYTE attr;			// Encryption-related information
 		BYTE reserve[512];	// append
-		BYTE crc32[4];		// 校验
+		BYTE crc32[4];		// Checksum
 	} SExtendInfo;
 
 	typedef struct {
@@ -84,24 +84,24 @@ public:
 	} SSystemUpgradeInfo;
 
 	/**
-	 * TS升级文件信息
+	 * TS upgrade file information
 	 */
 	typedef struct {
-		BYTE hsize;			// 等于tsinfo大小
-		BYTE type;			// 0=未知型号、1=TS_GT911
-		BYTE flags;			// BIT(0)=强制升级位(1表示强制升级使能)、BIT(1)-BIT(7)保留
-		BYTE reserve;		// 保留
-		BYTE version[4];	// ts固件版本号
-		BYTE pix[4];		// ts分辨率，H16=x L16=y，高16表示x，低16表示y
-		BYTE date[4];		// ts固件生成日期，0x20171104 = 2017年11月4号
-		BYTE dataLen[4];	// 数据长度
-		BYTE hmd5[16];		// tsdata的MD5校验，不包含tsinfo，#define MD5_DIGEST_LENGTH 16
-		BYTE *pData;		// 数据
+		BYTE hsize;			// Equal to the size of tsinfo
+		BYTE type;			// 0=unknown model, 1=TS_GT911
+		BYTE flags;			// BIT(0)=force-upgrade bit (1 means force upgrade enabled), BIT(1)-BIT(7) reserved
+		BYTE reserve;		// Reserved
+		BYTE version[4];	// TS firmware version number
+		BYTE pix[4];		// TS resolution, H16=x L16=y; the high 16 bits are x, the low 16 bits are y
+		BYTE date[4];		// TS firmware build date, 0x20171104 = 4 November 2017
+		BYTE dataLen[4];	// Data length
+		BYTE hmd5[16];		// MD5 checksum of tsdata, excluding tsinfo; #define MD5_DIGEST_LENGTH 16
+		BYTE *pData;		// Data
 		bool needUpgrade;
 	} STSUpgradeInfo;
 
 	/**
-	 * ts类型
+	 * TS type
 	 */
 	enum ts_type {
 		TS_GT911 = 1,
@@ -207,7 +207,7 @@ private:
 
 
 	/**
-	 * private分区数据存储类型
+	 * Data storage type of the private partition
 	 */
 	enum val_type {
 		TYPE_BYTE = 1,
@@ -216,29 +216,29 @@ private:
 	};
 
 	/**
-	 * private分区头信息
+	 * Header information of the private partition
 	 */
 	typedef struct {
 		uint32_t crc32;			// head + all key + all val - 4
-		uint32_t hsize;			// 头大小
-		uint32_t keyCount;		// 键值个数
-		uint32_t keyOffset;		// 键值偏移
-		uint32_t keyAsize;		// 所有键值大小
-		uint32_t keySsize;		// 单个键值大小
-		uint32_t version;		// 版本
+		uint32_t hsize;			// Header size
+		uint32_t keyCount;		// Number of key-value pairs
+		uint32_t keyOffset;		// Key-value offset
+		uint32_t keyAsize;		// Total size of all key-value pairs
+		uint32_t keySsize;		// Size of a single key-value pair
+		uint32_t version;		// Version
 		BYTE reserve[100];
 	} SPrivateHead;
 
 	/**
-	 * private分区键值信息
+	 * Key-value information of the private partition
 	 */
 	typedef struct {
-		char key[32];			// 键值名称
-		uint32_t valOffset;		// 值偏移
-		uint32_t valLen;		// 值大小
-		BYTE type;				// 值类型
-		BYTE valid;				// 是否有效
-		BYTE index;				// key下标号
+		char key[32];			// Key name
+		uint32_t valOffset;		// Value offset
+		uint32_t valLen;		// Value size
+		BYTE type;				// Value type
+		BYTE valid;				// Whether it is valid
+		BYTE index;				// Key index
 		BYTE reserve[21];
 	} SPrivateKey;
 

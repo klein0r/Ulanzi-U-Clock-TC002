@@ -16,7 +16,7 @@ public:
 	void pauseAudio();
 	void resumeAudio();
 	bool isPlaying() const;
-	//0~6 0禁音
+	//0~6, 0 = muted
 	void setVolume(int lv);
 	void setMute(bool isMute);
 private:

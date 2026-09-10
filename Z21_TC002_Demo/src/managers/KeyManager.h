@@ -1,7 +1,7 @@
 /*
  * KeyManager.cpp
  *
- *  Created on: 2022年4月29日
+ *  Created on: 29 April 2022
  *      Author: guoxs
  */
 #ifndef MANAGERS_KEYMANAGER_H_
@@ -9,17 +9,17 @@
 
 #include <stdint.h>
 
-// 按键事件类型
+// Key event type
 enum EKeyCode {
-	E_KEYCODE_CLOCKWISE,        // 顺时针
-	E_KEYCODE_ANTI_CLOCKWISE,   // 逆时针
-	E_KEYCODE_KNOB_BUTTON = 0x67,   // 旋钮按键
-	E_KEYCODE_LEFT_BUTTON = 0x6C,   // 左键
-	E_KEYCODE_MIDDLE_BUTTON = 0x69, // 中键
-	E_KEYCODE_RIGHT_BUTTON = 0x6A,  // 右键
+	E_KEYCODE_CLOCKWISE,        // Clockwise
+	E_KEYCODE_ANTI_CLOCKWISE,   // Counter-clockwise
+	E_KEYCODE_KNOB_BUTTON = 0x67,   // Knob button
+	E_KEYCODE_LEFT_BUTTON = 0x6C,   // Left button
+	E_KEYCODE_MIDDLE_BUTTON = 0x69, // Middle button
+	E_KEYCODE_RIGHT_BUTTON = 0x6A,  // Right button
 };
 
-// 按键事件回调类型
+// Key event callback type
 typedef void (*on_key_event_cb)(int keyCode, int keyStatus);
 
 class KeyManager {

@@ -16,7 +16,7 @@ public:
 	virtual bool onKeyEvent(int keyCode, int keyStatus) override;
 	
 private:
-	int mColorIndex;  // 0:白，1:红，2:绿，3:蓝
+	int mColorIndex;  // 0: white, 1: red, 2: green, 3: blue
 	
 	void drawColorRect(Surface& surface);
 };

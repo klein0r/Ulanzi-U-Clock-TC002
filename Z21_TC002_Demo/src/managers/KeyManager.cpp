@@ -1,7 +1,7 @@
 /*
  * KeyManager.cpp
  *
- *  Created on: 2022年4月29日
+ *  Created on: 29 April 2022
  *      Author: guoxs
  */
 
@@ -26,10 +26,10 @@ namespace {
 
 #define TABLE_SIZE(x)		(sizeof(x)/sizeof(x[0]))
 
-// 顺时针
+// Clockwise
 #define CLOCKWISE_START_STATUS         0x8
 #define CLOCKWISE_STOP_STATUS          0x1
-// 逆时针
+// Counter-clockwise
 #define ANTI_CLOCKWISE_START_STATUS    0xD
 #define ANTI_CLOCKWISE_STOP_STATUS     0xB
 

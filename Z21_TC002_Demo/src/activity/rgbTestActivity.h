@@ -25,8 +25,8 @@
 #include "control/ZKVideoView.h"
 #include "window/ZKSlideWindow.h"
 
-/*TAG:Macro宏ID*/
-/*TAG:Macro宏ID END*/
+/*TAG:Macro macro ID*/
+/*TAG:Macro macro ID END*/
 
 class rgbTestActivity : public Activity, 
                      public ZKSeekBar::ISeekBarChangeListener, 
@@ -42,15 +42,15 @@ public:
     virtual ~rgbTestActivity();
 
     /**
-     * 注册定时器
+     * Register a timer
      */
 	void registerUserTimer(int id, int time);
 	/**
-	 * 取消定时器
+	 * Cancel a timer
 	 */
 	void unregisterUserTimer(int id);
 	/**
-	 * 重置定时器
+	 * Reset a timer
 	 */
 	void resetUserTimer(int id, int time);
 

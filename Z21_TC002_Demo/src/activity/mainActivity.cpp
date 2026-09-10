@@ -3,15 +3,15 @@
 ***********************************************/
 #include "mainActivity.h"
 
-/*TAG:GlobalVariable全局变量*/
+/*TAG:GlobalVariable global variables*/
 static mainActivity* mActivityPtr;
 
 /*register activity*/
 REGISTER_ACTIVITY(mainActivity);
 
 typedef struct {
-	int id; // 定时器ID ， 不能重复
-	int time; // 定时器  时间间隔  单位 毫秒
+	int id; // Timer ID, must be unique
+	int time; // Timer interval, in milliseconds
 }S_ACTIVITY_TIMEER;
 
 #include "logic/mainLogic.cc"
@@ -23,7 +23,7 @@ typedef struct {
 } SAppInfo;
 
 /**
- *点击跳转window
+ *Click to switch window
  */
 static SAppInfo sAppInfoTab[] = {
 //  { ID_MAIN_TEXT, "TextViewActivity" },
@@ -32,14 +32,14 @@ static SAppInfo sAppInfoTab[] = {
 /***************/
 typedef bool (*ButtonCallback)(ZKButton *pButton);
 /**
- * button onclick表
+ * button onclick table
  */
 typedef struct {
     int id;
     ButtonCallback callback;
 }S_ButtonCallback;
 
-/*TAG:ButtonCallbackTab按键映射表*/
+/*TAG:ButtonCallbackTab button mapping table*/
 static S_ButtonCallback sButtonCallbackTab[] = {
 };
 /***************/
@@ -91,8 +91,8 @@ static S_EditTextInputCallback SEditTextInputCallbackTab[] = {
 typedef void (*VideoViewCallback)(ZKVideoView *pVideoView, int msg);
 typedef struct {
     int id; //VideoView ID
-    bool loop; // 是否是轮播类型
-    int defaultvolume;//轮播类型时,默认视频音量
+    bool loop; // Whether it is the carousel type
+    int defaultvolume;//Default video volume for the carousel type
     VideoViewCallback onVideoViewCallback;
 }S_VideoViewCallback;
 /*TAG:VideoViewCallback*/
@@ -108,7 +108,7 @@ mainActivity::mainActivity() {
 
 mainActivity::~mainActivity() {
   //todo add init file here
-  // 退出应用时需要反注册
+  // Must be unregistered when the app exits
     EASYUICONTEXT->unregisterGlobalTouchListener(this);
     unregisterProtocolDataUpdateListener(onProtocolDataUpdate);
     onUI_quit();
@@ -255,7 +255,7 @@ void mainActivity::onVideoPlayerMessage(ZKVideoView *pVideoView, int msg) {
     for (int i = 0; i < tablen; ++i) {
         if (SVideoViewCallbackTab[i].id == pVideoView->getID()) {
         	if (SVideoViewCallbackTab[i].loop) {
-                //循环播放
+                //Loop playback
         		videoLoopPlayback(pVideoView, msg, i);
         	} else if (SVideoViewCallbackTab[i].onVideoViewCallback != NULL){
         	    SVideoViewCallbackTab[i].onVideoViewCallback(pVideoView, msg);
@@ -277,12 +277,12 @@ void mainActivity::videoLoopPlayback(ZKVideoView *pVideoView, int msg, size_t ca
 		mVideoLoopErrorCount = 0;
 		break;
 	case ZKVideoView::E_MSGTYPE_VIDEO_PLAY_ERROR:
-		/**错误处理 */
+		/**Error handling */
 		++mVideoLoopErrorCount;
 		if (mVideoLoopErrorCount > 100) {
 			LOGD("video loop error counts > 100, quit loop playback !");
             break;
-		} //不用break, 继续尝试播放下一个
+		} //No break; keep trying to play the next one
 	case ZKVideoView::E_MSGTYPE_VIDEO_PLAY_COMPLETED:
 		LOGD("ZKVideoView::E_MSGTYPE_VIDEO_PLAY_COMPLETED\n");
         std::vector<std::string> videolist;
@@ -313,7 +313,7 @@ void mainActivity::startVideoLoopPlayback() {
     		if (!videoView) {
     			return;
     		}
-    		//循环播放
+    		//Loop playback
     		videoLoopPlayback(videoView, ZKVideoView::E_MSGTYPE_VIDEO_PLAY_COMPLETED, i);
     		return;
     	}

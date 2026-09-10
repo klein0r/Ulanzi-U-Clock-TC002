@@ -6,7 +6,7 @@ extern "C" {
 #endif  /* __cplusplus */
 
 void onEasyUIInit(EasyUIContext *pContext) {
-	// 初始化时打开串口
+	// Open the serial port during initialization
 //	UARTCONTEXT->openUart(CONFIGMANAGER->getUartName().c_str(), CONFIGMANAGER->getUartBaudRate());
 }
 

@@ -8,9 +8,9 @@ PageBase::~PageBase() {
 
 void PageBase::sendLedData(const std::vector<uint8_t>& rgbData) {
     Mutex::Autolock l_(mSpiMutex);
-    //SPI初始化
+    //SPI initialization
     static SpiHelper spi(0, SPI_MODE_0, 10 * 1000 * 1000, 8, false);
-    //需要发送64 * 16 * 3字节数
+    //64 * 16 * 3 bytes have to be sent
     uint8_t* copyData = new uint8_t[64 * 16 * 3]();
     for(int y = 0; y < 16; y++) {
         for(int x = 0; x < 52 * 3; x++) {
@@ -18,16 +18,16 @@ void PageBase::sendLedData(const std::vector<uint8_t>& rgbData) {
         }
     }
     const int maxSz = 64 * 16 * 3;
-    //发送数据前需拉高GPIO_35一秒使MCU能够稳定检测
+    //GPIO_35 must be held high for one second before sending, so the MCU can detect it reliably
     GpioHelper::output("GPIO_35", 0);
     usleep(1 * 1000);
     if(!spi.write(copyData, maxSz)) {
         LOGE_TRACE("spi write error");
     }
-    //发送完成记得要重新拉低
+    //Remember to pull it low again once sending is done
     GpioHelper::output("GPIO_35", 1);
     delete[] copyData;
 
-    //数据不易发送过快，不得低于15ms/帧，否则会发送异常
+    //Do not send too fast; never below 15 ms/frame, otherwise sending fails
     usleep(15 * 1000);
 }

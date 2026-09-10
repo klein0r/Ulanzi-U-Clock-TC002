@@ -1,7 +1,7 @@
 /*
  * EventContext.cpp
  *
- *  Created on: 2022年4月29日
+ *  Created on: 29 April 2022
  *      Author: guoxs
  */
 
@@ -27,10 +27,10 @@ namespace event {
 
 #define TABLE_SIZE(x)		(sizeof(x)/sizeof(x[0]))
 
-// 顺时针
+// Clockwise
 #define CLOCKWISE_START_STATUS         0x8
 #define CLOCKWISE_STOP_STATUS          0x1
-// 逆时针
+// Counter-clockwise
 #define ANTI_CLOCKWISE_START_STATUS    0xD
 #define ANTI_CLOCKWISE_STOP_STATUS     0xB
 
@@ -114,23 +114,23 @@ protected:
 							if (event.type == EV_KEY) {
 //								LOGD("EV_KEY event code: 0x%02X, value: %d\n", event.code, event.value);
 								
-								// 处理按键事件
-								// event.code: 按键码
-								// event.value: 0=释放, 1=按下, 2=重复
+								// Handle key events
+								// event.code: the key code
+								// event.value: 0=released, 1=pressed, 2=repeat
 								switch (event.code) {
 								case E_KEYCODE_KNOB_BUTTON:
 								case E_KEYCODE_LEFT_BUTTON:
 								case E_KEYCODE_MIDDLE_BUTTON:
 								case E_KEYCODE_RIGHT_BUTTON:
-									if (event.value == 1) {  // 按下
+									if (event.value == 1) {  // Pressed
 										_notify_key_event_cb(event.code, 1);
-									} else if (event.value == 0) {  // 释放
+									} else if (event.value == 0) {  // Released
 										_notify_key_event_cb(event.code, 0);
 									}
-									// 忽略 value==2 的重复事件
+									// Ignore repeat events with value==2
 									break;
 								default:
-									// 未知按键码，可以打印日志调试
+									// Unknown key code; log it for debugging
 									// LOGD("Unknown key code: 0x%02X, value: %d\n", event.code, event.value);
 									break;
 								}

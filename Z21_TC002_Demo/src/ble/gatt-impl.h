@@ -1,7 +1,7 @@
 /*
  * gatt-impl.h
  *
- *  Created on: 2023年10月19日
+ *  Created on: 19 October 2023
  *      Author: ZKSWE Develop Team
  */
 

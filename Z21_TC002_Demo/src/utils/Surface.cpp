@@ -34,7 +34,7 @@ Surface::Surface(int width, int height, const Color& bgColor)
     int size = mWidth * mHeight * 3;
     mData = new uint8_t[size];
     
-    // 填充背景色
+    // Fill the background color
     for (int i = 0; i < mWidth * mHeight; i++) {
         mData[i * 3 + 0] = bgColor.r;
         mData[i * 3 + 1] = bgColor.g;
@@ -51,7 +51,7 @@ Surface::~Surface() {
 
 void Surface::setPixel(int x, int y, const Color& color) {
     if (x < 0 || x >= mWidth || y < 0 || y >= mHeight) {
-        return;  // 越界检查
+        return;  // Bounds check
     }
     
     int index = (y * mWidth + x) * 3;
@@ -77,7 +77,7 @@ void Surface::fill(const Color& color) {
 }
 
 void Surface::extractRGB(std::vector<uint8_t>& outData) const {
-    // 预分配空间: width * height * 3
+    // Pre-allocate space: width * height * 3
     outData.resize(mWidth * mHeight * 3);
     
     int outIndex = 0;

@@ -67,12 +67,12 @@ static bool onUI_Timer(int id){
 
 static bool onbtnTestActivityTouchEvent(const MotionEvent &ev) {
     switch (ev.mActionStatus) {
-		case MotionEvent::E_ACTION_DOWN://触摸按下
-			//LOGD("时刻 = %ld 坐标  x = %d, y = %d", ev.mEventTime, ev.mX, ev.mY);
+		case MotionEvent::E_ACTION_DOWN://Touch down
+			//LOGD("time = %ld coordinates x = %d, y = %d", ev.mEventTime, ev.mX, ev.mY);
 			break;
-		case MotionEvent::E_ACTION_MOVE://触摸滑动
+		case MotionEvent::E_ACTION_MOVE://Touch move
 			break;
-		case MotionEvent::E_ACTION_UP:  //触摸抬起
+		case MotionEvent::E_ACTION_UP:  //Touch up
 			break;
 		default:
 			break;

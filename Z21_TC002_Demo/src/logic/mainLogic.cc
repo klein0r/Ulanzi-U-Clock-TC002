@@ -66,15 +66,15 @@ static S_ACTIVITY_TIMEER REGISTER_ACTIVITY_TIMER_TAB[] = {
 };
 
 /**
- * 当界面构造时触发
+ * Fired when the screen is constructed
  */
 static void onUI_init(){
-	//防砖属性
+	//Anti-brick property
 	SystemProperties::setString("sys.zkapp.state", "running");
-	//初始化串口
+	//Initialize the serial port
 	McuManager::getInstance().initialize(new PixelMcuProto::McuParse("/dev/ttyS1", 1500000));
 
-	//每次开机必须先请求一下版本,才可以显示画面
+	//The version must be requested once at every boot before anything can be displayed
 	std::string mcuVer;
 	McuManager::getInstance().queryMcuVersion(mcuVer);
 	LOGI_TRACE("mcuVer : [%s]", mcuVer.c_str());
@@ -90,7 +90,7 @@ static void onUI_init(){
 }
 
 /**
- * 当切换到该界面时触发
+ * Fired when switching to this screen
  */
 static void onUI_intent(const Intent *intentPtr) {
     if (intentPtr != NULL) {
@@ -99,41 +99,41 @@ static void onUI_intent(const Intent *intentPtr) {
 }
 
 /*
- * 当界面显示时触发
+ * Fired when the screen is shown
  */
 static void onUI_show() {
 }
 
 /*
- * 当界面隐藏时触发
+ * Fired when the screen is hidden
  */
 static void onUI_hide() {
 
 }
 
 /*
- * 当界面完全退出时触发
+ * Fired when the screen has fully exited
  */
 static void onUI_quit() {
 
 }
 
 /**
- * 串口数据回调接口
+ * Serial data callback interface
  */
 static void onProtocolDataUpdate(const SProtocolData &data) {
 
 }
 
 /**
- * 定时器触发函数
- * 不建议在此函数中写耗时操作，否则将影响UI刷新
- * 参数： id
- *         当前所触发定时器的id，与注册时的id相同
- * 返回值: true
- *             继续运行当前定时器
+ * Timer callback function
+ * Avoid time-consuming work in this function, as it affects the UI refresh
+ * Parameter: id
+ *         The id of the timer that fired, the same id used at registration
+ * Return value: true
+ *             keep the current timer running
  *         false
- *             停止运行当前定时器
+ *             stop the current timer
  */
 static bool onUI_Timer(int id){
 	switch (id) {
@@ -145,22 +145,22 @@ static bool onUI_Timer(int id){
 }
 
 /**
- * 有新的触摸事件时触发
- * 参数：ev
- *         新的触摸事件
- * 返回值：true
- *            表示该触摸事件在此被拦截，系统不再将此触摸事件传递到控件上
+ * Fired when there is a new touch event
+ * Parameter: ev
+ *         the new touch event
+ * Return value: true
+ *            the touch event is intercepted here and is no longer passed on to the widgets
  *         false
- *            触摸事件将继续传递到控件上
+ *            the touch event is passed on to the widgets
  */
 static bool onmainActivityTouchEvent(const MotionEvent &ev) {
     switch (ev.mActionStatus) {
-		case MotionEvent::E_ACTION_DOWN://触摸按下
-			//LOGD("时刻 = %ld 坐标  x = %d, y = %d", ev.mEventTime, ev.mX, ev.mY);
+		case MotionEvent::E_ACTION_DOWN://Touch down
+			//LOGD("time = %ld coordinates x = %d, y = %d", ev.mEventTime, ev.mX, ev.mY);
 			break;
-		case MotionEvent::E_ACTION_MOVE://触摸滑动
+		case MotionEvent::E_ACTION_MOVE://Touch move
 			break;
-		case MotionEvent::E_ACTION_UP:  //触摸抬起
+		case MotionEvent::E_ACTION_UP:  //Touch up
 			break;
 		default:
 			break;

@@ -1,7 +1,7 @@
 /*
  * bluetooth_service.cpp
  *
- *  Created on: 2024年9月12日
+ *  Created on: 12 September 2024
  *      Author: pengzc
  */
 
@@ -79,8 +79,8 @@ void BluetoothService::startBluetooth() {
   if(base::exists("/lib/modules/4.9.84/aic_btusb.ko")
   || base::exists("/late/lib/modules/4.9.84/aic_btusb.ko"))
   {
-	SHELL("insmod /lib/modules/4.9.84/aic_btusb.ko"); // 装载ble模块驱动
-	SHELL("insmod /late/lib/modules/4.9.84/aic_btusb.ko"); // 装载ble模块驱动
+	SHELL("insmod /lib/modules/4.9.84/aic_btusb.ko"); // Load the BLE module driver
+	SHELL("insmod /late/lib/modules/4.9.84/aic_btusb.ko"); // Load the BLE module driver
   }
   else {
 	SHELL("/res/bin/hciconfig hci0 down");
@@ -102,13 +102,13 @@ void BluetoothService::startBluetooth() {
 
   SHELL("/res/bin/hciconfig hci0 up");
 #elif defined (__PLATFORM_T113EMMC__)
-  //通过hciattach,来区分价签的系统和广告机系统
+  //Use hciattach to tell the price-tag system from the advertising-display system
   auto systemInfo = base::readFile("/etc/init.rc");
   bool isAdSystem = (systemInfo.find("hciattach") != std::string::npos) ? true : false;
   LOGI_TRACE("isAdSystem = %d", isAdSystem);
   if (!isAdSystem) {
-	SHELL("insmod /lib/modules/5.4.61/aic_btusb.ko"); // 装载ble模块驱动
-	SHELL("insmod /late/lib/modules/5.4.61/aic_btusb.ko"); // 装载ble模块驱动
+	SHELL("insmod /lib/modules/5.4.61/aic_btusb.ko"); // Load the BLE module driver
+	SHELL("insmod /late/lib/modules/5.4.61/aic_btusb.ko"); // Load the BLE module driver
 	SHELL("/res/bin/hciconfig hci0 up");
 	SHELL("/res/bin/hcitool cmd 0x03 0x0003");
   }

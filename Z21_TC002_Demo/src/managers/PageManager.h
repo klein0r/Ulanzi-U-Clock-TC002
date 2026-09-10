@@ -19,7 +19,7 @@ public:
 private:
     std::mutex mMutex;
     std::vector<std::unique_ptr<PageBase>> mPages;
-    size_t mCurrentPageIndex;  // 当前页面下标，npos 表示无当前页面
+    size_t mCurrentPageIndex;  // Index of the current page; npos means there is no current page
     PageManager();
 	virtual ~PageManager();
 };
