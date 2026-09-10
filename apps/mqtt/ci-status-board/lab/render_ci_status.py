@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""渲染 CI 状态看板 GIF 用于 TC002 MQTT 发布。
+"""Render the CI status board GIF for publishing to the TC002 over MQTT.
 
-从 GitHub Actions API 获取最新运行状态，显示绿色/黄色/红色状态灯。
+Fetches the latest run status from the GitHub Actions API and shows a green/yellow/red status light.
 
-用法：
+Usage:
   python3 lab/render_ci_status.py --repo UlanziTechnology/Ulanzi-U-Clock-TC002
   python3 lab/render_ci_status.py --status success --message "Fix bug"
 
-输出：
-  stdout 输出 base64 编码的 GIF
+Output:
+  the base64-encoded GIF on stdout
 """
 
 import base64
@@ -22,7 +22,7 @@ from pathlib import Path
 try:
     from PIL import Image, ImageDraw
 except ImportError:
-    print("需要安装 Pillow: pip install pillow", file=sys.stderr)
+    print("Pillow is required: pip install pillow", file=sys.stderr)
     sys.exit(1)
 
 W, H = 52, 16
@@ -109,10 +109,10 @@ def render_status(data):
     img = Image.new("RGB", (W, H), BG)
     color = color_for(data["status"])
     draw = ImageDraw.Draw(img)
-    # 左侧状态方块
+    # Status square on the left
     draw.rectangle((0, 0, 15, 15), fill=color)
     draw_pixel_text(img, "CI", 2, 4, fill=BG)
-    # 右侧状态文字
+    # Status text on the right
     label = "PASS" if data["status"] == "success" else "RUN" if data["status"] == "running" else "FAIL"
     draw_pixel_text(img, label, 19, 4, fill=FG)
     return img
@@ -127,7 +127,7 @@ def render_gif(data):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="渲染 CI 状态看板 GIF")
+    parser = argparse.ArgumentParser(description="Render the CI status board GIF")
     parser.add_argument("--repo", default=os.environ.get("GITHUB_REPO", ""), help="owner/repo")
     parser.add_argument("--token", default=os.environ.get("GITHUB_TOKEN", ""))
     parser.add_argument("--status", choices=["success", "failure", "running"], default=None)
@@ -141,7 +141,7 @@ def main():
         try:
             data = fetch_github(args.repo, token=args.token or None)
         except Exception as e:
-            print(f"获取 GitHub 数据失败: {e}", file=sys.stderr)
+            print(f"Failed to fetch GitHub data: {e}", file=sys.stderr)
             data = {"status": "unknown", "message": str(e), "repo": args.repo}
     else:
         data = {"status": "running", "message": "Set GITHUB_REPO=owner/repo", "repo": "not configured"}
@@ -153,9 +153,9 @@ def main():
         raw = base64.b64decode(b64)
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         Path(args.output).write_bytes(raw)
-        print(f"\n# 写入 {args.output}", file=sys.stderr)
+        print(f"\n# written to {args.output}", file=sys.stderr)
 
-    print(f"\n# 仓库: {data['repo']} 状态: {data['status']} 信息: {data['message'][:50]}", file=sys.stderr)
+    print(f"\n# repo: {data['repo']} status: {data['status']} message: {data['message'][:50]}", file=sys.stderr)
 
 
 if __name__ == "__main__":

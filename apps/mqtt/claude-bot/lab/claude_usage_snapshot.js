@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 /**
- * ⚠️ 已弃用：此脚本已被 claude_statusline_bridge.js 取代。
+ * DEPRECATED: this script has been superseded by claude_statusline_bridge.js.
  *
- * TC002 Claude Bot — Codex 用量读取器（旧版）。
+ * TC002 Claude Bot - Codex usage reader (legacy).
  *
- * 通过 `ccusage codex daily --json` 读取 Codex 每日用量，
- * 计算今日花费（USD）和本周花费（USD）。
- * 缓存读取的 token 已排除，因为 prompt caching 不计费。
+ * Reads the daily Codex usage via `ccusage codex daily --json` and
+ * computes today's spend (USD) and this week's spend (USD).
+ * Cache-read tokens are excluded, because prompt caching is not billed.
  *
- * 无需配置预算 — 费用直接来自 ccusage，它对非缓存 token 应用每模型定价。
+ * No budget configuration needed - the cost comes straight from ccusage, which applies per-model pricing to non-cached tokens.
  *
- * 用法：
+ * Usage:
  *   node lab/claude_usage_snapshot.js
  *
- * 输出：
- *   包含今日和本周 Codex 花费（USD）及实际 token 数的 JSON。
+ * Output:
+ *   JSON with today's and this week's Codex spend (USD) and the actual token counts.
  */
 
 const { execFileSync } = require("node:child_process");

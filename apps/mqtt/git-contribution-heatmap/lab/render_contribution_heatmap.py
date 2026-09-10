@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""渲染 Git 贡献热力图 52×16 GIF 用于 TC002 MQTT 发布。
+"""Render the Git contribution heatmap as a 52x16 GIF for publishing to the TC002 over MQTT.
 
-从 GitHub API 获取用户贡献数据，用 52×7 点阵显示本年度活跃度。
+Fetches the user's contribution data from the GitHub API and shows this year's activity on a 52x7 dot matrix.
 
-用法：
+Usage:
   python3 lab/render_contribution_heatmap.py --user castlewong
   python3 lab/render_contribution_heatmap.py --demo
 
-输出：
-  stdout 输出 base64 编码的 GIF
+Output:
+  the base64-encoded GIF on stdout
 """
 
 import base64
@@ -24,7 +24,7 @@ from pathlib import Path
 try:
     from PIL import Image, ImageDraw
 except ImportError:
-    print("需要安装 Pillow: pip install pillow", file=sys.stderr)
+    print("Pillow is required: pip install pillow", file=sys.stderr)
     sys.exit(1)
 
 W, H = 52, 16
@@ -193,7 +193,7 @@ def render(values):
     img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
     max_value = max(values) if values else 0
-    # 左上角显示 GITHUB 字样
+    # Show the word GITHUB in the top left corner
     draw_tiny_text(img, "GITHUB", 1, 1, fill=LOGO)
     for index, value in enumerate(values[:365]):
         x = min(51, index // GRID_ROWS)
@@ -214,7 +214,7 @@ def render_gif(values):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="渲染 Git 贡献热力图 GIF")
+    parser = argparse.ArgumentParser(description="Render the Git contribution heatmap GIF")
     parser.add_argument("--user", default=os.environ.get("GITHUB_USER", "castlewong"))
     parser.add_argument("--token", default=os.environ.get("GITHUB_TOKEN", ""))
     parser.add_argument("--demo", action="store_true")
@@ -233,8 +233,8 @@ def main():
                 values = fetch_push_counts(args.user)
                 source = "public_events"
         except Exception as e:
-            print(f"获取 GitHub 数据失败: {e}", file=sys.stderr)
-            print("使用 demo 数据", file=sys.stderr)
+            print(f"Failed to fetch GitHub data: {e}", file=sys.stderr)
+            print("falling back to demo data", file=sys.stderr)
             values = generate_demo_values()
             source = "demo"
 
@@ -245,9 +245,9 @@ def main():
         raw = base64.b64decode(b64)
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         Path(args.output).write_bytes(raw)
-        print(f"\n# 写入 {args.output}", file=sys.stderr)
+        print(f"\n# written to {args.output}", file=sys.stderr)
 
-    print(f"\n# 用户: {args.user} 年度总提交: {sum(values)} 来源: {source}", file=sys.stderr)
+    print(f"\n# user: {args.user} commits this year: {sum(values)} source: {source}", file=sys.stderr)
 
 
 if __name__ == "__main__":

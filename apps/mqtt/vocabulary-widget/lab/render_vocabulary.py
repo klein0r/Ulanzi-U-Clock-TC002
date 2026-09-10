@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""渲染单词轮播 GIF 用于 TC002 MQTT 发布。
+"""Render the vocabulary carousel GIF for publishing to the TC002 over MQTT.
 
-从 CSV/Excel 词表读取单词，用像素字体渲染英文，用系统字体渲染中文释义。
+Reads words from a CSV/Excel word list, rendering the English with a pixel font and the Chinese definitions with a system font.
 
-用法：
+Usage:
   python3 lab/render_vocabulary.py --word hello
   python3 lab/render_vocabulary.py --count 3
   python3 lab/render_vocabulary.py --all
 
-输出：
-  stdout 输出 base64 编码的 GIF
+Output:
+  the base64-encoded GIF on stdout
 """
 
 import base64
@@ -23,7 +23,7 @@ from pathlib import Path
 try:
     from PIL import Image, ImageDraw, ImageFont
 except ImportError:
-    print("需要安装 Pillow: pip install pillow", file=sys.stderr)
+    print("Pillow is required: pip install pillow", file=sys.stderr)
     sys.exit(1)
 
 W, H = 52, 16
@@ -167,14 +167,14 @@ def parse_csv(path):
 
 def load_words(path, limit=None):
     if not path.exists():
-        raise FileNotFoundError(f"词表文件不存在: {path}")
+        raise FileNotFoundError(f"word list file not found: {path}")
     if path.suffix.lower() == ".csv":
         records = parse_csv(path)
     else:
-        raise ValueError("只支持 .csv 文件")
+        raise ValueError("only .csv files are supported")
 
     if not records:
-        raise ValueError("词表为空")
+        raise ValueError("the word list is empty")
 
     headers = list(records[0].keys())
     word_col = None
@@ -187,7 +187,7 @@ def load_words(path, limit=None):
             meaning_col = h
 
     if not word_col or not meaning_col:
-        raise ValueError(f"找不到单词/释义列。表头: {headers}")
+        raise ValueError(f"no word/definition column found. Headers: {headers}")
 
     words = []
     for record in records:
@@ -199,7 +199,7 @@ def load_words(path, limit=None):
             break
 
     if not words:
-        raise ValueError("没有可用的单词")
+        raise ValueError("no usable words")
     return words
 
 
@@ -208,7 +208,7 @@ def pick_words(words, count=1, show_all=False, seed=None, word=None):
         needle = word.strip().lower()
         matches = [e for e in words if e["word"].strip().lower() == needle]
         if not matches:
-            raise ValueError(f'单词未找到: "{word}"')
+            raise ValueError(f'word not found: "{word}"')
         return matches[:1]
     if show_all or count <= 0 or count >= len(words):
         return words
@@ -262,20 +262,20 @@ def render_vocabulary_gif(words):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="渲染单词轮播 GIF")
-    parser.add_argument("--word", default=None, help="指定单个单词")
-    parser.add_argument("--count", type=int, default=1, help="随机抽取数量")
-    parser.add_argument("--all", action="store_true", help="显示全部单词")
-    parser.add_argument("--seed", type=int, default=None, help="随机种子")
-    parser.add_argument("--source", default=None, help="CSV 词表路径")
+    parser = argparse.ArgumentParser(description="Render the vocabulary carousel GIF")
+    parser.add_argument("--word", default=None, help="show one specific word")
+    parser.add_argument("--count", type=int, default=1, help="how many words to pick at random")
+    parser.add_argument("--all", action="store_true", help="show all words")
+    parser.add_argument("--seed", type=int, default=None, help="random seed")
+    parser.add_argument("--source", default=None, help="path to the CSV word list")
     parser.add_argument("--output", default=None)
     args = parser.parse_args()
 
-    # 默认词表路径
+    # Default word list path
     if args.source:
         source = Path(args.source)
     else:
-        # 尝试多个可能的路径
+        # Try several possible paths
         candidates = [
             Path(__file__).resolve().parent.parent / "word list.csv",
             Path.home() / "Documents" / "Try_projs" / "Ulanzi_Pixbar_TC002-Apps" / "Pixbar-TC002-Apps" / "apps" / "vocabulary-widget" / "word list.csv",
@@ -286,7 +286,7 @@ def main():
                 source = c
                 break
         if not source:
-            print("错误: 找不到词表文件，请用 --source 指定", file=sys.stderr)
+            print("error: word list file not found, specify one with --source", file=sys.stderr)
             sys.exit(1)
 
     all_words = load_words(source)
@@ -299,9 +299,9 @@ def main():
         raw = base64.b64decode(b64)
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         Path(args.output).write_bytes(raw)
-        print(f"\n# 写入 {args.output}", file=sys.stderr)
+        print(f"\n# written to {args.output}", file=sys.stderr)
 
-    print(f"\n# 词表: {len(all_words)} 词 选中: {[w['word'] for w in words]}", file=sys.stderr)
+    print(f"\n# word list: {len(all_words)} words, selected: {[w['word'] for w in words]}", file=sys.stderr)
 
 
 if __name__ == "__main__":

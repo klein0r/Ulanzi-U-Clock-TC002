@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""渲染应援灯牌 GIF 用于 TC002 MQTT 发布。
+"""Render the fan light board GIF for publishing to the TC002 over MQTT.
 
-支持动画：心跳、烟花、流星、滚动文字、组合。
+Supported animations: heartbeat, firework, shooting star, scrolling text, combo.
 
-用法：
+Usage:
   python3 lab/render_confession.py heart
   python3 lab/render_confession.py firework
   python3 lab/render_confession.py star
   python3 lab/render_confession.py text "I ❤ YOU"
   python3 lab/render_confession.py combo "LOVE"
 
-输出：
-  stdout 输出 base64 编码的 GIF
+Output:
+  the base64-encoded GIF on stdout
 """
 
 import base64
@@ -24,7 +24,7 @@ from pathlib import Path
 try:
     from PIL import Image, ImageDraw, ImageFont
 except ImportError:
-    print("需要安装 Pillow: pip install pillow", file=sys.stderr)
+    print("Pillow is required: pip install pillow", file=sys.stderr)
     sys.exit(1)
 
 W, H = 52, 16
@@ -83,7 +83,7 @@ def draw_heart_frame(scale):
 
 
 def render_heart():
-    """心跳动画"""
+    """Heartbeat animation"""
     scales = [0.7, 1.0, 1.15, 1.0]
     durations = [160, 140, 120, 140]
     frames = [draw_heart_frame(s) for s in scales]
@@ -94,7 +94,7 @@ def render_heart():
 
 
 def render_firework():
-    """烟花动画"""
+    """Firework animation"""
     random.seed(42)
     cx, cy = 26, 8
     n_particles = 32
@@ -138,7 +138,7 @@ def render_firework():
 
 
 def render_star():
-    """流星动画"""
+    """Shooting star animation"""
     random.seed(7)
     sx0, sy0 = 48, -1
     sx1, sy1 = -3, 16
@@ -228,7 +228,7 @@ def _sanitize_text(text):
 
 
 def render_text(text):
-    """滚动文字动画"""
+    """Scrolling text animation"""
     text = _sanitize_text(text)
     font, tw, th = _pick_font(text)
     strip_w = W * 2 + tw
@@ -254,7 +254,7 @@ def render_text(text):
 
 
 def render_combo(text):
-    """组合：居中文字"""
+    """Combo: centered text"""
     text = _sanitize_text(text)
     font, tw, th = _pick_font(text)
     img = Image.new("RGB", (W, H), BG)
@@ -269,11 +269,11 @@ def render_combo(text):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="渲染应援灯牌 GIF")
+    parser = argparse.ArgumentParser(description="Render the fan light board GIF")
     parser.add_argument("animation", choices=["heart", "firework", "star", "text", "combo"],
-                        help="动画类型")
+                        help="animation type")
     parser.add_argument("message", nargs="?", default="I ❤ YOU",
-                        help="文字内容（text/combo 模式）")
+                        help="the text (for the text/combo modes)")
     parser.add_argument("--output", default=None)
     args = parser.parse_args()
 
@@ -291,9 +291,9 @@ def main():
         raw = base64.b64decode(b64)
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         Path(args.output).write_bytes(raw)
-        print(f"\n# 写入 {args.output}", file=sys.stderr)
+        print(f"\n# written to {args.output}", file=sys.stderr)
 
-    print(f"\n# 动画: {args.animation}", file=sys.stderr)
+    print(f"\n# animation: {args.animation}", file=sys.stderr)
 
 
 if __name__ == "__main__":

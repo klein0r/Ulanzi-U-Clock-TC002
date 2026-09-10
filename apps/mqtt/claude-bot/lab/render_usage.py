@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""渲染 TC002 Claude Bot 限额用量 GIF。
+"""Render the TC002 Claude Bot quota usage GIF.
 
-接收两个限额使用率百分比（5 小时窗口、7 天窗口），生成 52x16
-动画 GIF，包含 Claude Bot 吉祥物和用量条。
+Takes the two quota usage percentages (5-hour window, 7-day window) and generates a 52x16
+animated GIF containing the Claude Bot mascot and the usage bars.
 
-用法：
-  python3 lab/render_usage.py <五分钟限额百分比> <七天限额百分比>
+Usage:
+  python3 lab/render_usage.py <5-hour quota percentage> <7-day quota percentage>
   python3 lab/render_usage.py 75 42
 
-输出（stdout）：
-  单行 base64 编码的 GIF，可直接嵌入 TC002 Custom App JSON payload。
+Output (stdout):
+  a single line of base64-encoded GIF, ready to embed in a TC002 Custom App JSON payload.
 
-加 --file PATH 参数会同时将 GIF 写入磁盘。
+Adding --file PATH also writes the GIF to disk.
 """
 
 import sys
@@ -140,7 +140,7 @@ def tiny_text_width(text):
 
 
 def bar_color_for_pct(pct):
-    """根据限额使用率百分比返回进度条颜色。"""
+    """Return the progress bar color for a quota usage percentage."""
     if pct >= 90:
         return BAR_DANGER
     if pct >= 70:
@@ -149,7 +149,7 @@ def bar_color_for_pct(pct):
 
 
 def draw_pct_bar(draw, x, y, width, pct, fill):
-    """绘制基于百分比（0-100）的用量进度条。"""
+    """Draw the usage progress bar for a percentage (0-100)."""
     pct = max(0, min(100, int(pct)))
     draw.rectangle((x, y, x + width - 1, y + 1), outline=BAR_FRAME)
     inner_w = max(0, round((width - 2) * pct / 100))
@@ -158,9 +158,9 @@ def draw_pct_bar(draw, x, y, width, pct, fill):
 
 
 def usage_frame(five_hour_pct, seven_day_pct, pupils=EYE_RIGHT, bob=0):
-    """绘制一帧用量显示动画。
-    five_hour_pct: 5 小时窗口限额使用率（0-100）
-    seven_day_pct: 7 天窗口限额使用率（0-100）
+    """Draw one frame of the usage animation.
+    five_hour_pct: 5-hour window quota usage (0-100)
+    seven_day_pct: 7-day window quota usage (0-100)
     """
     img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
@@ -185,9 +185,9 @@ def usage_frame(five_hour_pct, seven_day_pct, pupils=EYE_RIGHT, bob=0):
 
 
 def render_usage_gif(five_hour_pct, seven_day_pct):
-    """生成动画用量 GIF 并返回 base64 字符串。
-    five_hour_pct: 5 小时窗口限额使用率（0-100）
-    seven_day_pct: 7 天窗口限额使用率（0-100）
+    """Generate the animated usage GIF and return it as a base64 string.
+    five_hour_pct: 5-hour window quota usage (0-100)
+    seven_day_pct: 7-day window quota usage (0-100)
     """
     five_hour_pct = max(0, min(100, int(five_hour_pct)))
     seven_day_pct = max(0, min(100, int(seven_day_pct)))

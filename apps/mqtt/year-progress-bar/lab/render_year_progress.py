@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""渲染年进度条 52×16 GIF 用于 TC002 MQTT 发布。
+"""Render the year progress bar as a 52x16 GIF for publishing to the TC002 over MQTT.
 
-用法：
+Usage:
   python3 lab/render_year_progress.py [--date YYYY-MM-DD] [--output PATH]
 
-输出：
-  stdout 输出 base64 编码的 GIF
-  可选 --output 同时写入文件
+Output:
+  the base64-encoded GIF on stdout
+  --output optionally also writes it to a file
 """
 
 import base64
@@ -18,7 +18,7 @@ from pathlib import Path
 try:
     from PIL import Image, ImageDraw
 except ImportError:
-    print("需要安装 Pillow: pip install pillow", file=sys.stderr)
+    print("Pillow is required: pip install pillow", file=sys.stderr)
     sys.exit(1)
 
 W, H = 52, 16
@@ -75,9 +75,9 @@ def year_stats(today):
     day_index = max(0, min(days_total - 1, (today - start).days))
     days_done = day_index + 1
     progress = max(0, min(1, days_done / days_total))
-    # 考虑星期几：2026年1月1日是周四(weekday=3)
-    start_weekday = start.weekday()  # 0=周一, 3=周四, 6=周日
-    # 周一为第一天，1月1日应该在第 weekday 行
+    # Account for the weekday: 1 January 2026 is a Thursday (weekday=3)
+    start_weekday = start.weekday()  # 0=Monday, 3=Thursday, 6=Sunday
+    # Monday is the first day, so 1 January belongs in row `weekday`
     cell_index = min(W * GRID_ROWS - 1, day_index + start_weekday)
     week_index = cell_index // GRID_ROWS
     day_row = cell_index % GRID_ROWS
@@ -91,7 +91,7 @@ def render(progress, current_cell, week_index, year=2026):
     WHITE = (255, 255, 255)
     BRIGHT = (0, 255, 136)
     
-    # 计算三组文字的宽度
+    # Work out the width of the three text groups
     year_label = f"Y{year}"
     year_w = tiny_text_width(year_label)
     week_num = str(week_index + 1)
@@ -100,21 +100,21 @@ def render(progress, current_cell, week_index, year=2026):
     pct_label = f"{round(progress * 100)}%"
     pct_w = tiny_text_width(pct_label)
     
-    # 均匀分布：左边 Y2026，中间 W26，右边 48%
-    gap = 4  # 组间距
+    # Even distribution: Y2026 on the left, W26 in the middle, 48% on the right
+    gap = 4  # spacing between groups
     total = year_w + week_w + pct_w + gap * 2
     x_year = 1
     x_week = x_year + year_w + gap
     x_pct = W - pct_w - 1
     
-    # 绘制文字
+    # Draw the text
     draw_tiny_text(img, "Y", x_year, 1, fill=GRAY)
     draw_tiny_text(img, str(year), x_year + tiny_text_width("Y") + 1, 1, fill=WHITE)
     draw_tiny_text(img, "W", x_week, 1, fill=GRAY)
     draw_tiny_text(img, week_num, x_week + tiny_text_width("W") + 1, 1, fill=WHITE)
     draw_tiny_text(img, pct_label, x_pct, 1, fill=WHITE)
     
-    # 绘制日历点阵
+    # Draw the calendar dot matrix
     for cell in range(current_cell + 1):
         x = cell // GRID_ROWS
         y = GRID_Y + (cell % GRID_ROWS)
@@ -124,7 +124,7 @@ def render(progress, current_cell, week_index, year=2026):
 
 
 def render_gif(progress, current_cell, week_index):
-    # 不再生成多帧动画，只生成静态 GIF
+    # No longer generates a multi-frame animation, only a static GIF
     img = render(progress, current_cell, week_index)
     buf = BytesIO()
     img.save(buf, format="GIF", loop=0)
@@ -133,9 +133,9 @@ def render_gif(progress, current_cell, week_index):
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="渲染年进度条 GIF")
-    parser.add_argument("--date", default=None, help="指定日期 YYYY-MM-DD")
-    parser.add_argument("--output", default=None, help="同时写入文件")
+    parser = argparse.ArgumentParser(description="Render the year progress bar GIF")
+    parser.add_argument("--date", default=None, help="use a specific date, YYYY-MM-DD")
+    parser.add_argument("--output", default=None, help="also write it to a file")
     args = parser.parse_args()
 
     today = datetime.strptime(args.date, "%Y-%m-%d").date() if args.date else date.today()
@@ -147,9 +147,9 @@ def main():
         raw = base64.b64decode(b64)
         Path(args.output).parent.mkdir(parents=True, exist_ok=True)
         Path(args.output).write_bytes(raw)
-        print(f"\n# 写入 {args.output}", file=sys.stderr)
+        print(f"\n# written to {args.output}", file=sys.stderr)
 
-    print(f"\n# 日期: {today} 进度: {round(progress*100)}% ({days_done}/{days_total}天) 第{week_index+1}周第{day_row+1}行", file=sys.stderr)
+    print(f"\n# date: {today} progress: {round(progress*100)}% ({days_done}/{days_total} days) week {week_index+1}, row {day_row+1}", file=sys.stderr)
 
 
 if __name__ == "__main__":
