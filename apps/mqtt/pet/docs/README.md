@@ -1,6 +1,6 @@
 # TC002 Desktop Pixel Pet (Grey Cat)
 
-[![Open your Home Assistant instance and show the blueprint import dialog.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2Fpet%2Fblueprint.yaml)
+[![Open your Home Assistant instance and show the blueprint import dialog.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fblob%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fpet%2Fblueprint.yaml)
 
 ## Introduction
 

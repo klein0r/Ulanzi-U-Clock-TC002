@@ -4,7 +4,7 @@
 
 First configure the **Home Assistant MQTT integration** so that it connects to the same MQTT broker the TC002 is using.
 
-[![Import the Home Assistant blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
+[![Import the Home Assistant blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fblob%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
 
 When creating the automation, fill in:
 

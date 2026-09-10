@@ -83,7 +83,7 @@ mosquitto_pub -h <BROKER_HOST> -t ulanzi_1bf6/custom/vibe_signal \
 
 | App | Purpose |
 | --- | --- |
-| [vibe-coding-signal-light](apps/mqtt/vibe-coding-signal-light/) | A status traffic light for AI coding assistants ([one-click import](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fmain%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml)) |
+| [vibe-coding-signal-light](apps/mqtt/vibe-coding-signal-light/) | A status traffic light for AI coding assistants ([one-click import](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml)) |
 | [claude-bot](apps/mqtt/claude-bot/) | Claude status and usage display |
 | [pet](apps/mqtt/pet/) | Desktop pixel pet (grey cat) |
 | [fire](apps/mqtt/fire/) | Virtual fireplace |
@@ -114,7 +114,7 @@ To have the TC002 show the run state of an AI coding assistant, the chain is: `C
 | `blocked`   | Flashing red light | Permission request / failure / blocked |
 | `off`       | Lights out   | No task            |
 
-**Minimal setup**: import the [vibe-coding-signal-light blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fmain%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml) into HA → create an `input_select` entity and an automation → a local script (see [AGENT_HOOKS.md](apps/mqtt/vibe-coding-signal-light/docs/AGENT_HOOKS.md) for an example) updates the entity through the HA REST API/webhook → Claude Code / Codex hooks call the script at the right lifecycle points (task submitted → `attention`, failure / permission → `blocked`, finished → `idle`). When several sessions run at once, aggregate with "any blocked → red; any attention → yellow; otherwise lights out".
+**Minimal setup**: import the [vibe-coding-signal-light blueprint](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml) into HA → create an `input_select` entity and an automation → a local script (see [AGENT_HOOKS.md](apps/mqtt/vibe-coding-signal-light/docs/AGENT_HOOKS.md) for an example) updates the entity through the HA REST API/webhook → Claude Code / Codex hooks call the script at the right lifecycle points (task submitted → `attention`, failure / permission → `blocked`, finished → `idle`). When several sessions run at once, aggregate with "any blocked → red; any attention → yellow; otherwise lights out".
 
 ## 7. Custom Development
 

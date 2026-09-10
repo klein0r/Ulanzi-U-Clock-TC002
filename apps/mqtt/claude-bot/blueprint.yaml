@@ -4,7 +4,7 @@
 # TC002 Claude Bot
 # Publishes a TC002 Custom App JSON payload over MQTT.
 # Target path after merging into the official repository:
-# https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/claude-bot/blueprint.yaml
+# https://github.com/klein0r/Ulanzi-U-Clock-TC002/blob/docs/translate-to-english/apps/mqtt/claude-bot/blueprint.yaml
 
 blueprint:
   name: TC002 Claude Bot
@@ -21,7 +21,7 @@ blueprint:
     Author: 王行知
     License: GPL-3.0-or-later
   domain: automation
-  source_url: https://raw.githubusercontent.com/UlanziTechnology/Ulanzi-U-Clock-TC002/main/apps/mqtt/claude-bot/blueprint.yaml
+  source_url: https://raw.githubusercontent.com/klein0r/Ulanzi-U-Clock-TC002/docs/translate-to-english/apps/mqtt/claude-bot/blueprint.yaml
   input:
     status_entity:
       name: State entity

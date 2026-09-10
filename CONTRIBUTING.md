@@ -194,7 +194,7 @@ blueprint:
     Author: Your Name <your@email.com>
     License: GPL-3.0-or-later
   domain: automation
-  source_url: https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/battery-monitor/blueprint.yaml
+  source_url: https://github.com/klein0r/Ulanzi-U-Clock-TC002/blob/docs/translate-to-english/apps/mqtt/battery-monitor/blueprint.yaml
   input:
     battery_sensor:
       name: Battery sensor
@@ -226,7 +226,7 @@ action:
 Embed the "Open in HA" badge at the top of `docs/README.md`. Template:
 
 ```markdown
-[![Open your Home Assistant instance and show the blueprint import dialog.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2F<your-app-name>%2Fblueprint.yaml)
+[![Open your Home Assistant instance and show the blueprint import dialog.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fblob%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2F<your-app-name>%2Fblueprint.yaml)
 ```
 
 Replace `<your-app-name>` with your directory name, and escape every `/` in the URL as `%2F`.
@@ -260,7 +260,7 @@ Click **Fork** on GitHub, then clone your fork:
 ```bash
 git clone https://github.com/<your-username>/Ulanzi-U-Clock-TC002.git
 cd Ulanzi-U-Clock-TC002
-git remote add upstream https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002.git
+git remote add upstream https://github.com/klein0r/Ulanzi-U-Clock-TC002.git
 ```
 
 ### 2. Create a Branch

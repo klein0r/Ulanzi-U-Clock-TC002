@@ -18,7 +18,7 @@ You must use the **Google Chrome browser** and be logged in to your Xiaohongshu 
 - [SHA-256](release/SHA256SUMS)
 - [Home Assistant blueprint](blueprint.yaml)
 
-[![Open your Home Assistant instance and show the blueprint import dialog](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
+[![Open your Home Assistant instance and show the blueprint import dialog](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fblob%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
 
 A single blueprint instance can serve multiple devices. Each TC002 is bound to one Xiaohongshu profile in the extension; the blueprint only permits device prefixes on an explicit allowlist, and fixes the app name after `custom/`. The refresh interval has a minimum and a default of 5 minutes (300 seconds).
 

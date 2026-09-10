@@ -44,7 +44,7 @@ Example: `ulanzi_1bf6/custom/claude_bot`
 ### 3. Clone the Repository
 
 ```bash
-git clone https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002.git
+git clone -b docs/translate-to-english https://github.com/klein0r/Ulanzi-U-Clock-TC002.git
 cd Ulanzi-U-Clock-TC002
 ```
 

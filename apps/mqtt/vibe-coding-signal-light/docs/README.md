@@ -1,6 +1,6 @@
 # TC002 Vibe Coding Traffic Light
 
-[![Import into Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fmain%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml)
+[![Import into Home Assistant](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml)
 
 ## Introduction
 

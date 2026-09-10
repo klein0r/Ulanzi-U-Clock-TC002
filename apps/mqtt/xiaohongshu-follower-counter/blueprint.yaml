@@ -6,7 +6,7 @@ blueprint:
     Receives the 52×16 follower count image that the Chrome extension reads and renders from a Xiaohongshu profile,
     validates it against the TC002 device prefix allowlist, and publishes it through the Home Assistant MQTT integration.
   domain: automation
-  source_url: https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/xiaohongshu-follower-counter/blueprint.yaml
+  source_url: https://github.com/klein0r/Ulanzi-U-Clock-TC002/blob/docs/translate-to-english/apps/mqtt/xiaohongshu-follower-counter/blueprint.yaml
   input:
     webhook_id:
       name: Webhook ID

@@ -27,12 +27,12 @@ One blueprint instance supports multiple devices, but only publishes to the `all
 
 ## Import the Home Assistant Blueprint
 
-[![Import the blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
+[![Import the blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fblob%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fxiaohongshu-follower-counter%2Fblueprint.yaml)
 
 If the My button does not work, paste the manual blueprint import URL under "Settings → Automations & Scenes → Blueprints → Import blueprint" in Home Assistant:
 
 ```text
-https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/xiaohongshu-follower-counter/blueprint.yaml
+https://github.com/klein0r/Ulanzi-U-Clock-TC002/blob/docs/translate-to-english/apps/mqtt/xiaohongshu-follower-counter/blueprint.yaml
 ```
 
 Create the automation and configure:

@@ -13,7 +13,7 @@ blueprint:
 
     Author: 小熊猫  License: GPL-3.0-or-later
   domain: automation
-  source_url: https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/fire/blueprint.yaml
+  source_url: https://github.com/klein0r/Ulanzi-U-Clock-TC002/blob/docs/translate-to-english/apps/mqtt/fire/blueprint.yaml
   input:
     switch_entity:
       name: Switch entity

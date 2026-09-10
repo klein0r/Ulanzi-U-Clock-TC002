@@ -32,7 +32,7 @@ This directory collects community-contributed **MQTT apps** — mostly [Home Ass
 |---|---|
 | **Type** | Home Assistant blueprint |
 | **Author** | 王行知 ([@castlewong](https://github.com/castlewong)) |
-| **Import** | [![Open in HA](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fmain%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml) |
+| **Import** | [![Open in HA](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2Fvibe-coding-signal-light%2Fblueprint.yaml) |
 | **Documentation** | [vibe-coding-signal-light/docs/README.md](vibe-coding-signal-light/docs/README.md) |
 
 ---
@@ -111,7 +111,7 @@ blueprint:
     Author: Your Name
     License: GPL-3.0-or-later
   domain: automation
-  source_url: https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/<your-app-name>/blueprint.yaml
+  source_url: https://github.com/klein0r/Ulanzi-U-Clock-TC002/blob/docs/translate-to-english/apps/mqtt/<your-app-name>/blueprint.yaml
   input:
     # The parameters exposed to the user (broker, topic, thresholds, display text, etc.)
 
@@ -136,7 +136,7 @@ action:
 Markdown template for the "Open in HA" button:
 
 ```markdown
-[![Open in HA](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FUlanziTechnology%2FUlanzi-U-Clock-TC002%2Fblob%2Fmain%2Fapps%2Fmqtt%2F<your-app-name>%2Fblueprint.yaml)
+[![Open in HA](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fklein0r%2FUlanzi-U-Clock-TC002%2Fblob%2Fdocs%2Ftranslate-to-english%2Fapps%2Fmqtt%2F<your-app-name>%2Fblueprint.yaml)
 ```
 
 Replace every `/` in the URL with `%2F`, and replace `<your-app-name>` with your directory name.
@@ -171,6 +171,6 @@ When submitting an app you must still follow these rules:
 ## Feedback and Discussion
 
 - **Submitting an app**: see "Submitting Your App" above
-- **Reporting problems / making suggestions**: [GitHub Issues](https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/issues)
+- **Reporting problems / making suggestions**: [GitHub Issues](https://github.com/klein0r/Ulanzi-U-Clock-TC002/issues)
 - **Full contribution guidelines**: [`../../CONTRIBUTING.md`](../../CONTRIBUTING.md)
 - **Official website**: <https://www.ulanzi.com>
