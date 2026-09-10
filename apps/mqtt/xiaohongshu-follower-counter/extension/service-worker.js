@@ -93,7 +93,7 @@ async function handleSnapshot(input, sender) {
     if (!targets.length) {
       throw new Error("profile_not_configured");
     }
-    if (!config.homeAssistantUrl || !config.webhookId) throw new Error("请先配置 Home Assistant Webhook");
+    if (!config.homeAssistantUrl || !config.webhookId) throw new Error("Configure the Home Assistant webhook first");
     const settled = await Promise.allSettled(targets.map(({ deviceIp }) => publishToDevice(
       deviceIp,
       snapshot,
@@ -165,7 +165,7 @@ function sanitizeSnapshot(input) {
   }
   return {
     profileUrl,
-    displayName: String(input.displayName || "小红书用户").slice(0, 80),
+    displayName: String(input.displayName || "Xiaohongshu user").slice(0, 80),
     followerCount: input.followerCount,
     observedAt: Number.isFinite(Date.parse(input.observedAt)) ? input.observedAt : new Date().toISOString(),
   };

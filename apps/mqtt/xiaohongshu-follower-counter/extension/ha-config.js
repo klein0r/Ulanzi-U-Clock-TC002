@@ -7,7 +7,7 @@ export function normalizeHomeAssistantUrl(value) {
   try {
     url = new URL(String(value ?? "").trim());
   } catch {
-    throw new TypeError("Home Assistant 地址无效");
+    throw new TypeError("Invalid Home Assistant address");
   }
   if (!["http:", "https:"].includes(url.protocol)
     || url.username
@@ -15,17 +15,17 @@ export function normalizeHomeAssistantUrl(value) {
     || url.pathname !== "/"
     || url.search
     || url.hash) {
-    throw new TypeError("Home Assistant 地址无效");
+    throw new TypeError("Invalid Home Assistant address");
   }
   if (url.protocol === "http:" && !isLocalHttpHost(url.hostname)) {
-    throw new TypeError("HTTP Home Assistant 必须位于局域网");
+    throw new TypeError("An HTTP Home Assistant address must be on the local network");
   }
   return url.origin;
 }
 
 export function normalizeWebhookId(value) {
   const webhookId = String(value ?? "").trim();
-  if (!WEBHOOK_ID_PATTERN.test(webhookId)) throw new TypeError("Webhook ID 必须是 24–128 位 URL 安全字符");
+  if (!WEBHOOK_ID_PATTERN.test(webhookId)) throw new TypeError("The webhook ID must be 24-128 URL-safe characters");
   return webhookId;
 }
 
@@ -83,12 +83,12 @@ function normalizePrivateIpv4(value) {
   const input = String(value ?? "").trim();
   const parts = input.split(".");
   if (parts.length !== 4 || parts.some((part) => !/^\d{1,3}$/.test(part) || Number(part) > 255)) {
-    throw new TypeError("设备 IP 必须是局域网 IPv4 地址");
+    throw new TypeError("The device IP must be a private-network IPv4 address");
   }
   const octets = parts.map(Number);
   const isPrivate = octets[0] === 10
     || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)
     || (octets[0] === 192 && octets[1] === 168);
-  if (!isPrivate) throw new TypeError("设备 IP 必须是局域网 IPv4 地址");
+  if (!isPrivate) throw new TypeError("The device IP must be a private-network IPv4 address");
   return octets.join(".");
 }

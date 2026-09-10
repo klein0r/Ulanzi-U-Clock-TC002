@@ -169,13 +169,13 @@ function findNameInText(text) {
 }
 
 function titleName(document) {
-  return document.title?.split(/[-—|]/, 1)[0]?.trim().slice(0, 80) || "小红书用户";
+  return document.title?.split(/[-—|]/, 1)[0]?.trim().slice(0, 80) || "Xiaohongshu user";
 }
 
 function snapshot(profileUrl, displayName, followerCount, observedAt, source) {
   return {
     profileUrl,
-    displayName: displayName || "小红书用户",
+    displayName: displayName || "Xiaohongshu user",
     followerCount,
     observedAt,
     source,

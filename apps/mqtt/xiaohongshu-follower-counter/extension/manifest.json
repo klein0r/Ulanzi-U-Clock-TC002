@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TC002 小红书粉丝数（本地）",
+  "name": "TC002 Xiaohongshu Follower Count (local)",
   "version": "0.2.0",
-  "description": "在本地读取小红书用户主页粉丝数并发送到 TC002。",
+  "description": "Reads the follower count from a Xiaohongshu user profile locally and sends it to the TC002.",
   "permissions": ["storage", "alarms"],
   "host_permissions": [
     "https://www.xiaohongshu.com/*",
