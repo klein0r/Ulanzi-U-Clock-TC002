@@ -41,7 +41,7 @@ python3 pixbar_panel.py        # Windows: python pixbar_panel.py
 ## 3. What Is Open Source Here
 
 ```
-├── IDE使用说明/     FlyThings IDE development documentation
+├── ide-guide/       FlyThings IDE development documentation
 ├── Z21_TC002_Demo/  The official sample project (covering LED/buttons/audio/MIC/Wi-Fi/BLE/GPIO), import into the IDE and build directly
 ├── apps/
 │   ├── flythings/   Device-side C++ apps (pixel-pet-display and others)
@@ -118,7 +118,7 @@ To have the TC002 show the run state of an AI coding assistant, the chain is: `C
 
 ## 7. Custom Development
 
-1. Install the [FlyThings IDE](https://download.s21i.co99.net/14731609/0/0/ABUIABBPGAAglMLczgYo0Mjk3AU.zip?f=flythings-ide-win32-win32-x86-zkswe-setup.zip&v=1775706403); for the full documentation see [IDE使用说明/说明文档.md](IDE使用说明/说明文档.md)
+1. Install the [FlyThings IDE](https://download.s21i.co99.net/14731609/0/0/ABUIABBPGAAglMLczgYo0Mjk3AU.zip?f=flythings-ide-win32-win32-x86-zkswe-setup.zip&v=1775706403); for the full documentation see [ide-guide/documentation.md](ide-guide/documentation.md)
 2. Import `Z21_TC002_Demo/` (`File → Import → Existing Projects into Workspace`)
 3. Build: `Ctrl+Alt+Z` (the output goes to `Release/`)
 4. Flashing: Wi-Fi ADB only — in the IDE go to `Debug configuration → ADB configuration → WIFI`, enter the IP and choose `Download and debug` (`Ctrl+Alt+R`, not persistent; for a persistent install use `Image build` to produce `update.img`, put it in the root of a FAT32 TF card and upgrade from the card)

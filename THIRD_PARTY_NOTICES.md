@@ -67,8 +67,8 @@ At build time the FlyThings IDE fetches them automatically from its package repo
 **Location:**
 
 - `Z21_TC002_Demo/resources/1KHZ.MP3` — a 1 kHz test sine wave audio file, used in the `AudioTestPage` demo
-- `IDE使用说明/resources/ADBDriverInstaller.zip` — a third-party ADB driver installer
-- `IDE使用说明/resources/z11sproject-configuration.zip` — an example IDE project configuration
+- `ide-guide/resources/ADBDriverInstaller.zip` — a third-party ADB driver installer
+- `ide-guide/resources/z11sproject-configuration.zip` — an example IDE project configuration
 
 **Note:** These resources are used for teaching and demonstration purposes only; the copyright belongs to the original authors. If they infringe on your rights, please contact the repository maintainers to have them removed.
 
@@ -76,7 +76,7 @@ At build time the FlyThings IDE fetches them automatically from its package repo
 
 ## 5. Documentation and Screenshots
 
-**Location:** all `*.png`, `*.jpg` and `*.gif` files under `IDE使用说明/resources/`
+**Location:** all `*.png`, `*.jpg` and `*.gif` files under `ide-guide/resources/`
 
 **Note:** The screenshots show the interfaces of the FlyThings IDE and third-party software; the copyright belongs to the respective software authors, and they are used solely to illustrate the accompanying technical documentation.
 
