@@ -1,15 +1,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 王行知
 #
-# TC002 年进度条
-# 在 TC002 上显示今年的进度，52 列 × 7 行日历点阵。
+# TC002 Year Progress Bar
+# Shows this year's progress on the TC002 as a 52-column × 7-row calendar dot matrix.
 
 blueprint:
-  name: TC002 年进度条
+  name: TC002 Year Progress Bar
   description: |
-    在 TC002 上显示今年的进度，52 列 × 7 行日历点阵。
-    已过去日期显示暗绿色，今天显示亮绿色呼吸动画。
-    右上角显示进度百分比。
+    Shows this year's progress on the TC002 as a 52-column × 7-row calendar dot matrix.
+    Days already past are shown in dark green, today in a bright green breathing animation.
+    The progress percentage is shown in the top right corner.
 
     Author: 王行知
     License: GPL-3.0-or-later
@@ -18,13 +18,13 @@ blueprint:
   input:
     custom_app_topic:
       name: TC002 Custom App MQTT topic
-      description: 格式：[PREFIX]/custom/[APP_NAME]
+      description: "Format: [PREFIX]/custom/[APP_NAME]"
       default: ulanzi_1bf6/custom/year_progress
       selector:
         text: {}
     display_duration:
-      name: 显示时长
-      description: payload duration 值，单位秒。
+      name: Display duration
+      description: The payload duration value, in seconds.
       default: 31536000
       selector:
         number:
@@ -33,8 +33,8 @@ blueprint:
           unit_of_measurement: s
           mode: box
     update_hour:
-      name: 更新时间（小时）
-      description: 每天几点更新进度条（0-23）
+      name: Update time (hour)
+      description: The hour of the day at which the progress bar is updated (0-23)
       default: 8
       selector:
         number:

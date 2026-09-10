@@ -1,27 +1,27 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 小熊猫
 #
-# TC002 虚拟壁炉
-# 当某个开关/布尔实体打开时，在 TC002 上点一炉火（循环火焰 GIF）；关闭时熄灭。
+# TC002 Virtual Fireplace
+# When a switch/boolean entity turns on, lights a fire on the TC002 (a looping fire GIF); it goes out when the entity turns off.
 
 blueprint:
-  name: TC002 虚拟壁炉
+  name: TC002 Virtual Fireplace
   description: |
-    把 TC002 变成一炉桌面壁炉。监听一个开关/布尔实体：
-    打开时发布循环火焰动画；关闭时发布熄灭（黑屏）帧。
-    可接 input_boolean、switch，或"温度低于阈值"的模板实体（冷了就生火）。
+    Turns the TC002 into a desktop fireplace. It watches a switch/boolean entity:
+    when it turns on, a looping fire animation is published; when it turns off, a blank (black) frame.
+    Works with input_boolean, switch, or a template entity based on "temperature below threshold" (light a fire when it gets cold).
 
     Author: 小熊猫  License: GPL-3.0-or-later
   domain: automation
   source_url: https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/fire/blueprint.yaml
   input:
     switch_entity:
-      name: 开关实体
-      description: 控制壁炉开/关的 HA 实体（input_boolean / switch 等）。
+      name: Switch entity
+      description: The HA entity that controls the fireplace on/off (input_boolean / switch, etc.).
       selector:
         entity: {}
     on_value:
-      name: "开"状态值
+      name: On-state value
       default: "on"
       selector: { text: {} }
     custom_app_topic:
@@ -29,12 +29,12 @@ blueprint:
       default: ulanzi_1bf6/custom/fire
       selector: { text: {} }
     app_duration:
-      name: 显示时长
+      name: Display duration
       default: 3600
       selector:
         number: { min: 1, max: 86400, unit_of_measurement: s, mode: box }
     retain_message:
-      name: 保留 MQTT 消息
+      name: Retain MQTT message
       default: true
       selector: { boolean: {} }
 

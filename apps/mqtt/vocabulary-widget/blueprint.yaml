@@ -1,14 +1,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 王行知
 #
-# TC002 单词轮播
-# 从 CSV 词表读取单词，在 TC002 上轮播显示。
+# TC002 Vocabulary Carousel
+# Reads words from a CSV word list and shows them in a carousel on the TC002.
 
 blueprint:
-  name: TC002 单词轮播
+  name: TC002 Vocabulary Carousel
   description: |
-    把 TC002 变成桌面背单词小屏幕。
-    从 CSV 词表读取单词，随机抽取显示。
+    Turns the TC002 into a small desktop screen for learning vocabulary.
+    Reads words from a CSV word list and shows them at random.
 
     Author: 王行知
     License: GPL-3.0-or-later
@@ -17,13 +17,13 @@ blueprint:
   input:
     custom_app_topic:
       name: TC002 Custom App MQTT topic
-      description: 格式：[PREFIX]/custom/[APP_NAME]
+      description: "Format: [PREFIX]/custom/[APP_NAME]"
       default: ulanzi_1bf6/custom/vocabulary
       selector:
         text: {}
     display_duration:
-      name: 显示时长
-      description: payload duration 值，单位秒。
+      name: Display duration
+      description: The payload duration value, in seconds.
       default: 31536000
       selector:
         number:

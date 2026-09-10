@@ -1,25 +1,25 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 王行知
 #
-# TC002 Vibe Coding 红绿灯
-# 通过 MQTT 发布 TC002 Custom App JSON payload。
-# 合并到官方仓库后的目标路径：
+# TC002 Vibe Coding Traffic Light
+# Publishes a TC002 Custom App JSON payload over MQTT.
+# Target path after merging into the official repository:
 # https://github.com/UlanziTechnology/Ulanzi-U-Clock-TC002/blob/main/apps/mqtt/vibe-coding-signal-light/blueprint.yaml
 
 blueprint:
-  name: TC002 Vibe Coding 红绿灯
+  name: TC002 Vibe Coding Traffic Light
   description: |
-    把 Ulanzi U-Clock TC002 变成一个桌面状态红绿灯。
+    Turns the Ulanzi U-Clock TC002 into a desktop status traffic light.
 
-    这个 Blueprint 会监听一个 Home Assistant 实体。
-    当实体状态为 off、idle、working、attention、blocked 之一时，
-    自动向 TC002 Custom App MQTT topic 发布对应的红绿灯显示内容。
+    This blueprint watches a Home Assistant entity.
+    When the entity's state is one of off, idle, working, attention or blocked,
+    it publishes the matching traffic light content to the TC002 Custom App MQTT topic.
 
-    off: 全黑熄灭
-    idle: 绿灯
-    working: 绿、黄、红循环
-    attention: 黄灯闪烁
-    blocked: 红灯闪烁
+    off: all black, lights out
+    idle: green light
+    working: green, yellow and red in a loop
+    attention: flashing yellow light
+    blocked: flashing red light
 
     Author: 王行知
     License: GPL-3.0-or-later
@@ -27,19 +27,19 @@ blueprint:
   source_url: https://raw.githubusercontent.com/UlanziTechnology/Ulanzi-U-Clock-TC002/main/apps/mqtt/vibe-coding-signal-light/blueprint.yaml
   input:
     status_entity:
-      name: 状态实体
-      description: 用来提供当前状态的 Home Assistant 实体，例如 input_select。
+      name: State entity
+      description: The Home Assistant entity that provides the current state, for example input_select.
       selector:
         entity: {}
     custom_app_topic:
       name: TC002 Custom App MQTT topic
-      description: 通常是 [PREFIX]/custom/[APP_NAME]，例如 ulanzi_1bf6/custom/vibe_signal。
+      description: Usually [PREFIX]/custom/[APP_NAME], for example ulanzi_1bf6/custom/vibe_signal.
       default: ulanzi_1bf6/custom/vibe_signal
       selector:
         text: {}
     app_duration:
-      name: 显示时长
-      description: 写入 TC002 Custom App payload 的 duration 值，单位为秒。
+      name: Display duration
+      description: The duration value written into the TC002 Custom App payload, in seconds.
       default: 3600
       selector:
         number:
@@ -48,33 +48,33 @@ blueprint:
           unit_of_measurement: s
           mode: box
     retain_message:
-      name: 保留 MQTT 消息
-      description: 是否让 broker 保留最后一条消息，便于 TC002 重连后恢复显示。
+      name: Retain MQTT message
+      description: Whether the broker should retain the last message, so the TC002 restores the display after reconnecting.
       default: false
       selector:
         boolean: {}
     off_state:
-      name: 熄灭状态值
+      name: Off state value
       default: "off"
       selector:
         text: {}
     idle_state:
-      name: 空闲状态值
+      name: Idle state value
       default: "idle"
       selector:
         text: {}
     working_state:
-      name: 工作中状态值
+      name: Working state value
       default: "working"
       selector:
         text: {}
     attention_state:
-      name: 需要注意状态值
+      name: Attention state value
       default: "attention"
       selector:
         text: {}
     blocked_state:
-      name: 阻塞状态值
+      name: Blocked state value
       default: "blocked"
       selector:
         text: {}

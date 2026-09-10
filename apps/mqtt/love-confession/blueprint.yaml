@@ -1,14 +1,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Copyright (C) 2026 王行知
 #
-# TC002 应援灯牌
-# 心跳、烟花、流星动画 + 自定义滚动文字。
+# TC002 Fan Light Board
+# Heartbeat, firework and shooting-star animations + custom scrolling text.
 
 blueprint:
-  name: TC002 应援灯牌
+  name: TC002 Fan Light Board
   description: |
-    把 TC002 变成表白神器 / 演唱会应援灯牌。
-    支持心跳、烟花、流星动画，以及自定义滚动文字。
+    Turns the TC002 into a confession gadget / concert fan light board.
+    Supports heartbeat, firework and shooting-star animations, as well as custom scrolling text.
 
     Author: 王行知
     License: GPL-3.0-or-later
@@ -17,13 +17,13 @@ blueprint:
   input:
     custom_app_topic:
       name: TC002 Custom App MQTT topic
-      description: 格式：[PREFIX]/custom/[APP_NAME]
+      description: "Format: [PREFIX]/custom/[APP_NAME]"
       default: ulanzi_1bf6/custom/love_confession
       selector:
         text: {}
     display_duration:
-      name: 显示时长
-      description: payload duration 值，单位秒。
+      name: Display duration
+      description: The payload duration value, in seconds.
       default: 31536000
       selector:
         number:
