@@ -72,12 +72,29 @@ The official TC002 firmware has MQTT built in, so text / icons / drawing command
 **Payload (UTF-8 JSON)**:
 
 ```json
-{"duration": 3600,
- "text": [{"content": "Hello World", "fontHeight": 10, "x": 0, "y": 0,
-           "color": "#FFFFFF", "align": "left", "valign": "top",
-           "rect": [0, 0, 52, 16], "charSpacing": 1}],
- "image": [{"data": "data:image/png;base64,...", "position": [0, 0]}],
- "draw": []}
+{
+  "duration": 3600,
+  "text": [
+    {
+      "content": "Hello World",
+      "fontHeight": 10,
+      "x": 0,
+      "y": 0,
+      "color": "#FFFFFF",
+      "align": "left",
+      "valign": "top",
+      "rect": [0, 0, 52, 16],
+      "charSpacing": 1
+    }
+  ],
+  "image": [
+    {
+      "data": "data:image/png;base64,...",
+      "position": [0, 0]
+    }
+  ],
+  "draw": []
+}
 ```
 
 * `text` is the text and its layout; `image` is an inline base64 PNG/GIF (no image host required); `draw` is vector drawing (`{"df":[0,0,52,16,"#000000"]}` fills a rectangle, `{"dfc":[26,8,5,"#FFCB52"]}` fills a circle); `duration` is the number of seconds to display.
